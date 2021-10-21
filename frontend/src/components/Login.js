@@ -41,6 +41,8 @@ class Login extends Component {
             .catch(err => console.error(err))
     };
     render() {
+        {console.log(sessionStorage.getItem("jwt"))}
+        {console.log(this.state.isAuthenticated)}
         if (sessionStorage.getItem("jwt")) {
             return (
                 <div>
@@ -57,8 +59,13 @@ class Login extends Component {
         } else {
             return (
                 <div className="Login" >
-                    <Form >
-                        <Form.Group size="lg" controlId="login">
+                    <Form onSubmit={this.login} onKeyDown={(event)=>
+                        {
+                            if(event.code=='Enter') {
+                                this.login()
+                            }
+                        }}>
+                        <Form.Group size="lg" controlId="login" >
                             <Form.Label>Логин</Form.Label>
                             <Form.Control
                                 autoFocus
@@ -78,7 +85,7 @@ class Login extends Component {
                             />
                         </Form.Group>
                         <div className="d-grid gap-2">
-                            <Button  variant="outline-primary" block size="lg"  type="submit" onClick={this.login}>
+                            <Button  variant="outline-primary" block size="lg"  type="submit" >
                                 Вход
                             </Button>
                         </div>
