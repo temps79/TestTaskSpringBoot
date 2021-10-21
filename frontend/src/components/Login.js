@@ -41,8 +41,6 @@ class Login extends Component {
             .catch(err => console.error(err))
     };
     render() {
-        {console.log(sessionStorage.getItem("jwt"))}
-        {console.log(this.state.isAuthenticated)}
         if (sessionStorage.getItem("jwt")) {
             return (
                 <div>

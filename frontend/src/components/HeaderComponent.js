@@ -2,7 +2,8 @@ import React, {Component} from 'react';
 import {Button, Container, Nav, Navbar} from "react-bootstrap";
 import ApexChart from "./ApexChart";
 import ExportExcelComponent from "./ExportExcelComponent";
-import {Route, Switch} from "react-router-dom";
+import {Redirect, Route, Switch} from "react-router-dom";
+import RegistationComponent from "./RegistationComponent";
 
 
 
@@ -23,6 +24,9 @@ class HeaderComponent extends Component {
                                 <Nav.Link  href='/download'>
                                     Выгрузка списка в Excel
                                 </Nav.Link>
+                                <Nav.Link  href='/registration' >
+                                    Регистрация
+                                </Nav.Link>
                             </Nav>
                                 <Nav.Item>
                                     <Button variant="outline-light" href={"/"} onClick={()=>{
@@ -33,7 +37,8 @@ class HeaderComponent extends Component {
                         </Container>
                 </Navbar >
                 <Switch>
-                    <Route path='/download'    component={ExportExcelComponent}></Route>
+                    <Route path='/download'    component={ExportExcelComponent}/>
+                    <Route exact path='/registration'  component={RegistationComponent}/>
                     <Route  exact path='/apexchart'  component={ApexChart}/>
                 </Switch>
             </div>
