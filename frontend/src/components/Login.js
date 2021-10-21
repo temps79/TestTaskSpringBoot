@@ -25,13 +25,15 @@ class Login extends Component {
     handleChange = (event) => {
         this.setState({[event.target.name] : event.target.value});
     }
-    login = () => {
+    login = (e) => {
+        e.preventDefault()
         const user = {userName: this.state.username, password: this.state.password};
         axios.post("http://localhost:8080/login",user)
             .then(res => {
                 const jwtToken = res.headers['authorization'];
                 if (jwtToken != null) {
                     sessionStorage.setItem("jwt", jwtToken);
+
                     this.setState({isAuthenticated: true});
                 }
                 else {
@@ -60,7 +62,7 @@ class Login extends Component {
                     <Form onSubmit={this.login} onKeyDown={(event)=>
                         {
                             if(event.code=='Enter') {
-                                this.login()
+                                this.login(event)
                             }
                         }}>
                         <Form.Group size="lg" controlId="login" >
