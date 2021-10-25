@@ -36,7 +36,11 @@ public class EmployeeController {
     public Employee createEmployee(@RequestBody Employee employee){
         return employeeService.addEmployee(employee);
     }
-
+    @GetMapping("/remove/id={id}")
+    public ResponseEntity removeEmployeeById(@PathVariable long id){
+        employeeService.deleteEmployee(id);
+        return ResponseEntity.ok().build();
+    }
 
     @GetMapping(value = {"employees/{pageNo}/{pageSize}/{sortBy}/district={districts}/region={regions}",
             "employees/{pageNo}/{pageSize}/district={districts}/region={regions}",

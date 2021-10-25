@@ -14,8 +14,13 @@ class FormEmployeeComponent extends Component {
     cancel(){
         this.props.history.push('/')
     }
+    remove(){
+        let id =this.props.location.pathname.substr(this.props.location.pathname.lastIndexOf('id=')+3)
+        EmployeeService.removeEmployee(id)
+        this.props.history.push('/')
+    }
     componentDidMount() {
-        var id =this.props.location.pathname.substr(this.props.location.pathname.lastIndexOf('id=')+3)
+        let id =this.props.location.pathname.substr(this.props.location.pathname.lastIndexOf('id=')+3)
         EmployeeService.getEmployee(id).then((res)=> {
             this.setState({employee:res.data});
 
@@ -61,7 +66,8 @@ class FormEmployeeComponent extends Component {
                     }</ListGroup.Item>
                 </ListGroup>
                 <br/>
-                <Button variant="outline-danger" onClick={this.cancel.bind(this)}>Вернуться к списку сотрудников</Button>
+                <Button variant="outline-dark" onClick={this.cancel.bind(this)}>Вернуться к списку сотрудников</Button>{' '}
+                <Button variant="outline-danger" onClick={this.remove.bind(this)}>Удалить</Button>
 
             </div>
         );
