@@ -4,10 +4,28 @@ import {Button, Col, Form, Row} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css'
 import {Input} from "reactstrap";
 import Select from 'react-select';
+import {History, LocationState} from "history";
+import {HomeAddress} from "../interface/HomeAddressInterface";
+import {Employee} from "../interface/EmployeeInterface";
+import {Errors} from "../interface/ErrorsInterface";
+import {OperationMode} from "../interface/OperationModeInterface";
+import {RouteComponentProps} from "react-router-dom";
+import {withRouter} from "react-router";
 
 
+interface IProps extends RouteComponentProps{
+}
 
-class AddFormEmployeeComponent extends Component {
+
+interface IState {
+    homeAddresses?: HomeAddress;
+    operationMode:OperationMode;
+    employee:Employee;
+    errors:Errors;
+}
+
+
+class AddFormEmployeeComponent extends Component<IProps, IState> {
 
     district=[
         {
@@ -50,28 +68,32 @@ class AddFormEmployeeComponent extends Component {
         { label: 'ЗАО', value: 'ЗАО' },
         { label: 'ЮАО', value: 'ЮАО' },
     ];
-    constructor(props) {
+    constructor(props:IProps) {
         super(props);
 
         this.state={
             homeAddresses:{},
             operationMode:{},
-            employee:{},
+            employee:{
+                fullName:'',
+                age:0
+            },
             errors: {},
         }
     }
-    addEmployee = (e) => {
+    addEmployee = (e: React.MouseEvent<HTMLElement>) => {
         e.preventDefault();
         if(this.handleValidation()) {
-            let employee = {
+            let employee:Employee = {
                 fullName: this.state.employee.fullName,
                 age: this.state.employee.age,
             };
+
             if(JSON.stringify(this.state.operationMode)!='{}'){
-                employee['operationMode']=this.state.operationMode;
+                employee.operationMode=this.state.operationMode;
             }
             if(JSON.stringify(this.state.homeAddresses)!='{}'){
-                employee['homeAddresses']=this.state.homeAddresses;
+                employee.homeAddresses=this.state.homeAddresses;
             }
             EmployeeService.addEmployee(employee).then(res => {
                 console.log('addEmployee:'+JSON.stringify(res.data['emp_id']))
@@ -81,17 +103,14 @@ class AddFormEmployeeComponent extends Component {
 
     }
 
-    handleInputChange= event => {
-        const { name, value } = event.currentTarget
-        this.setState({ [name]: value })
-    }
-    handleTimeChange = event  =>{
-        var hourse=event.target.value.split(':')[0]
-        var minute=event.target.value.split(':')[1]
-        var date = new Date();
-        date.setHours(hourse,minute);
-        var tempDate=this.state.operationMode
-        if (event.target.name == 'startDay') {
+    handleTimeChange = (event: React.FormEvent<HTMLInputElement>)  =>{
+        const target = event.target as HTMLTextAreaElement;
+        let hourse=target.value.split(':')[0]
+        let minute=target.value.split(':')[1]
+        let date = new Date();
+        date.setHours(Number(hourse),Number(minute));
+        let tempDate=this.state.operationMode
+        if (target.name == 'startDay') {
             tempDate.startDay=date
         }
         else {
@@ -102,15 +121,17 @@ class AddFormEmployeeComponent extends Component {
         })
     }
 
-    getHoursAndTime(emp){
-        var date=new Date(emp)
-        var options = {
-            timezone: 'UTC',
-            hour: 'numeric',
-            minute: 'numeric',
-        };
-        var time=date.toLocaleString("ru",options)
-        return time;
+    getHoursAndTime(emp: Date | undefined){
+        if (emp!=undefined) {
+            let date = new Date(emp)
+            let options: object = {
+                timezone: 'UTC',
+                hour: 'numeric',
+                minute: 'numeric',
+            };
+            let time = date.toLocaleString("ru", options)
+            return time;
+        }
     }
     cancel(){
         this.props.history.push('/')
@@ -118,47 +139,58 @@ class AddFormEmployeeComponent extends Component {
     handleValidation() {
         let employee = this.state.employee;
         let operationMode=this.state.operationMode;
-        let errors = {};
+        let errors:Errors = {};
         let formIsValid = true;
         if (!employee["fullName"]) {
             formIsValid = false;
-            errors["fullName"] = "Не может быть пустым";
+            errors.fullName = "Не может быть пустым";
         }
         if (/\d/.test(employee["fullName"])) {
             formIsValid = false;
-            errors["fullName"] = "Не может содержать цифры";
+            errors.fullName = "Не может содержать цифры";
         }
         if (!employee["age"]) {
             formIsValid = false;
-            errors["age"] = "Не может быть пустым";
+            errors.age = "Не может быть пустым";
         }
         if(JSON.stringify(operationMode)!='{}') {
             if (!operationMode["startDay"]) {
                 formIsValid = false;
-                errors["startDay"] = "Не может быть пустым";
+                errors.startDay = "Не может быть пустым";
             }
             if (!operationMode["endDay"]) {
                 formIsValid = false;
-                errors["endDay"] = "Не может быть пустым";
+                errors.endDay = "Не может быть пустым";
             }
         }
 
         this.setState({ errors: errors });
         return formIsValid;
     }
-    handleChange(field, e) {
-        let employee = this.state.employee;
-        employee[field] = e.target.value;
+    handleChange(field: keyof Employee, e: React.FormEvent<HTMLInputElement>) {
+        const target = e.target as HTMLTextAreaElement;
+        let value=target.value
+        let employee:Employee = this.state.employee;
+        // @ts-ignore
+        employee[field] = value;
         this.setState({ employee });
     }
-    handleChangeAddress(field, e){
+
+    handleChangeAddress(field: keyof HomeAddress, e: any){
+        const target = e.target ;
+        let value;
         if(e['value']!=null){
-            var value=e['value'];
+            value=e['value'];
         }else{
-            var value=e.target.value
+            value=e.target.value
         }
-        let homeAddresses = this.state.homeAddresses;
-        homeAddresses[field] = value;
+        let homeAddresses:HomeAddress | undefined = this.state.homeAddresses;
+        if (homeAddresses) {
+            homeAddresses[field] = value;
+        }else{
+            homeAddresses={}
+            homeAddresses[field] = value;
+        }
         this.setState({ homeAddresses });
     }
     render() {
@@ -197,21 +229,21 @@ class AddFormEmployeeComponent extends Component {
                                         />
                                     </Col>
                                     <Col >{
-                                        <Select
-                                            className="basic-single"
-                                            classNamePrefix="select"
-                                            placeholder='Выберите район'
-                                            defaultValue={'Арбат'}
-                                            options={this.district.find(i=>i.region==this.state.homeAddresses?.region)?.districts}
-                                            onChange={this.handleChangeAddress.bind(this, "district")}
-                                            isDisable={false}
-                                        />
+                                        // <Select
+                                        //     className="basic-single"
+                                        //     classNamePrefix="select"
+                                        //     placeholder='Выберите район'
+                                        //     defaultValue={'Арбат'}
+                                        //     options={this.district.find(i=>i.region==this.state.homeAddresses?.region)?.districts}
+                                        //     onChange={this.handleChangeAddress.bind(this, "district")}
+                                        //     isDisable={false}
+                                        // />
                                     }
                                     </Col>
                                     <Col>
-                                        <Select placeholder='Выберите округ' height='100' options={this.region}
-                                                onChange={this.handleChangeAddress.bind(this, "region")}
-                                        />
+                                        {/*<Select placeholder='Выберите округ'  height='100' options={this.region}*/}
+                                        {/*        onChange={this.handleChangeAddress.bind(this, "region")}*/}
+                                        {/*/>*/}
                                     </Col>
                                 </Row>
                         </Form>
@@ -233,7 +265,7 @@ class AddFormEmployeeComponent extends Component {
                         min="00:00"
                         max="23:00"
                         onChange={this.handleTimeChange}
-                        value={this.getHoursAndTime(this.state?.operationMode?.endDay)}
+                        value={this.getHoursAndTime(this.state.operationMode.endDay)}
                     />
                     <span style={{ color: "red" }}>{this.state.errors["endDay"]}<br/><br/></span>
 
@@ -246,4 +278,4 @@ class AddFormEmployeeComponent extends Component {
     }
 }
 
-export default AddFormEmployeeComponent;
+export default withRouter(AddFormEmployeeComponent);

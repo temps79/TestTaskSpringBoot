@@ -2,11 +2,20 @@ import Chart from 'react-apexcharts'
 import React, {Component} from "react";
 import EmployeeService from "../services/EmployeeService";
 import {Button,Modal} from "react-bootstrap";
-import {Redirect} from "react-router-dom";
+import {Redirect, RouteComponentProps} from "react-router-dom";
+import { History, LocationState } from "history";
 
+interface IProps extends RouteComponentProps{
+}
 
-class ApexChart extends Component {
-    constructor(props) {
+interface IState {
+    open?: boolean;
+    options:object;
+    series:Array<object>;
+}
+
+class ApexChart extends Component<IProps, IState> {
+    constructor(props: IProps) {
         super(props);
 
         this.state = {

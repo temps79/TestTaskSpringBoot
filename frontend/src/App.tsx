@@ -9,13 +9,12 @@ import {
 
 
 
-
 function App(){
     return (
         <div>
             <Router>
                 <div className='content' >
-                    <Login/>
+                    <Login />
                 </div>
             </Router>
         </div>
