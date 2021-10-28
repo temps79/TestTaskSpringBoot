@@ -177,7 +177,7 @@ class AddFormEmployeeComponent extends Component {
                     <br/>
                     <label>Возраст</label>
                     <Input
-                        type="text"
+                        type="number"
                         name="age"
                         placeholder='Возраст'
                         onChange={this.handleChange.bind(this, "age")}
