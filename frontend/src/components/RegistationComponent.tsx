@@ -1,10 +1,23 @@
 import React, {Component} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
 import RegistrationService from "../services/RegistrationService";
+import {RouteComponentProps} from "react-router-dom";
+import {Employee} from "../interface/EmployeeInterface";
+import {withRouter} from "react-router";
+import {Errors} from "../interface/ErrorsInterface";
 
+interface IProps extends RouteComponentProps{
+}
 
-class RegistationComponent extends Component {
-    constructor(props) {
+interface IState {
+    errors:Errors;
+    open:boolean;
+    login:string;
+    password:string;
+    confirmPassword:string;
+}
+class RegistationComponent extends Component<IProps, IState> {
+    constructor(props:IProps) {
         super(props);
         this.state = {
             errors: {},
@@ -22,7 +35,7 @@ class RegistationComponent extends Component {
         if(this.state.open==false)
             this.props.history.push('/')
     }
-    registration=(e)=>{
+    registration=(e:React.MouseEvent<HTMLElement>)=>{
         e.preventDefault();
         if(this.validation()){
             RegistrationService.registration(this.state.login, this.state.password).then(r => {
@@ -37,14 +50,11 @@ class RegistationComponent extends Component {
             })
         }
     }
-    handleChange = (event) => {
-        this.setState({[event.target.name] : event.target.value});
-    }
     validation(){
         let formIsValid = true;
-        let errors = {};
+        let errors:Errors = {};
         if(this.state.password!=this.state.confirmPassword){
-            errors["password"] = "Пароли не совпадают";
+            errors.password = "Пароли не совпадают";
             formIsValid=false;
         }
         this.setState({ errors: errors });
@@ -67,19 +77,29 @@ class RegistationComponent extends Component {
                             <Form.Group className="mb-3" controlId="formBasicEmail">
                                 <Form.Label>Логин</Form.Label>
                                 <Form.Control type="login"  name='login' placeholder="Введите логин"
-                                              onChange={this.handleChange}/>
+                                              onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+                                                  this.setState({login:event.target.value})
+                                                }
+                                              }
+                                />
                                 <span style={{ color: "red" }}>{this.state.errors["login"]}</span>
                             </Form.Group>
 
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Пароль</Form.Label>
                                 <Form.Control type="password" name='password' placeholder="Пароль"
-                                              onChange={this.handleChange}/>
+                                              onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+                                                  this.setState({password:event.target.value})
+                                                }
+                                              }/>
                             </Form.Group>
                             <Form.Group className="mb-3" controlId="formBasicPassword">
                                 <Form.Label>Подтверждение пароля</Form.Label>
                                 <Form.Control type="password"  name='confirmPassword' placeholder="Подтвердите пароль"
-                                              onChange={this.handleChange}/>
+                                              onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+                                                  this.setState({confirmPassword:event.target.value})
+                                                }
+                                              }/>
 
                                 <span style={{ color: "red" }}>{this.state.errors["password"]}</span>
                             </Form.Group>
@@ -99,4 +119,4 @@ class RegistationComponent extends Component {
     }
 }
 
-export default RegistationComponent;
+export default withRouter(RegistationComponent);

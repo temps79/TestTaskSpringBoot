@@ -2,13 +2,30 @@ import React, {Component} from 'react';
 import EmployeeService from "../services/EmployeeService";
 import {ListGroup, Table,Button} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css'
+import {RouteComponentProps} from "react-router-dom";
+import {HomeAddress} from "../interface/HomeAddressInterface";
+import {OperationMode} from "../interface/OperationModeInterface";
+import {Employee} from "../interface/EmployeeInterface";
+import {Errors} from "../interface/ErrorsInterface";
+import {withRouter} from "react-router";
 
-class FormEmployeeComponent extends Component {
-    constructor(props) {
+
+interface IProps extends RouteComponentProps{
+}
+
+interface IState {
+    employee:Employee;
+}
+
+class FormEmployeeComponent extends Component<IProps, IState> {
+    constructor(props:IProps) {
         super(props);
 
         this.state={
-            employee:{}
+            employee:{
+                fullName:'',
+                age:0
+            }
         }
     }
     cancel(){
@@ -27,17 +44,22 @@ class FormEmployeeComponent extends Component {
         });
 
     }
-    getHourseAndMinute(emp){
-        var dateStart=new Date(emp.operationMode.startDay)
-        var dateEnd=new Date(emp.operationMode.endDay)
-        var options = {
-            timezone: 'UTC',
+    getHourseAndMinute(emp: Employee){
+        const options = new Intl.DateTimeFormat('ru',{
             hour: 'numeric',
             minute: 'numeric',
-        };
-        var startDay=dateStart.toLocaleString("ru",options)
-        var endDay=dateEnd.toLocaleString("ru",options)
-        return startDay+'-'+endDay;
+        });
+        if(emp.operationMode!=undefined) {
+            if(emp.operationMode.startDay!=undefined && emp.operationMode.endDay!=undefined ) {
+                const dateStart = new Date(emp.operationMode.startDay);
+                const dateEnd = new Date(emp.operationMode.endDay);
+                const startDay = options.format(dateStart);
+                const endDay = options.format(dateEnd);
+                dateEnd.toLocaleString()
+                return startDay+'-'+endDay;
+            }
+        }
+
     }
     render() {
         return (
@@ -74,4 +96,4 @@ class FormEmployeeComponent extends Component {
     }
 }
 
-export default FormEmployeeComponent;
+export default withRouter(FormEmployeeComponent);

@@ -1,22 +1,34 @@
 import React, {Component} from 'react';
-import {Link} from "react-router-dom";
+import {Link, RouteComponentProps} from "react-router-dom";
 import EmployeeService from "../services/EmployeeService";
 import HomeAddressesService from "../services/HomeAddressesService";
 import {Button, Col, Row} from "react-bootstrap";
 import Select from "react-select";
 import {Input} from "reactstrap";
+import {Errors} from "../interface/ErrorsInterface";
+import {Employee} from "../interface/EmployeeInterface";
 
+interface IProps extends RouteComponentProps{
+}
 
-class ListEmployeeComponent extends Component {
+interface IState {
+    employees:Array<Employee>;
+    emp:Array<any>;
+    currentPage:number;
+    fetching:boolean;
+    totalCount:number;
+    value:string;
+    sortBy:string;
+    districts:Array<any>;
+    regions:Array<any>;
+    selectRegions:Array<any>;
+    selectDistricts:Array<any>;
+    open:boolean;
+}
 
-    LIMIT=30
-    sortList=[
-        { label: 'имени', value: '/fullName' },
-        { label: 'округу', value: '/homeAddresses.region' },
-        { label: 'району', value: '/homeAddresses.district' },
-        { label: 'возрасту', value: '/age' },
-    ]
-    constructor(props) {
+class ListEmployeeComponent extends Component<IProps, IState> {
+
+    constructor(props:IProps) {
         super(props);
 
         this.state={
@@ -37,8 +49,16 @@ class ListEmployeeComponent extends Component {
         this.addEmployee=this.addEmployee.bind(this);
     }
 
-    convertToOptions(array){
-        var new_array=[]
+    LIMIT=30
+    sortList=[
+        { label: 'имени', value: '/fullName' },
+        { label: 'округу', value: '/homeAddresses.region' },
+        { label: 'району', value: '/homeAddresses.district' },
+        { label: 'возрасту', value: '/age' },
+    ]
+
+    convertToOptions(array: any[]){
+        let new_array: { label: string; value: string; }[]=[]
         array.map(obj=>{
             new_array.push({'label':`${obj}`,'value':`${obj}`})
         })
@@ -58,11 +78,11 @@ class ListEmployeeComponent extends Component {
                 }
             )
     }
-    scrollHandler =(e)=>{
+    scrollHandler =(e:any)=>{
         if(this.state.fetching) {
             if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 50) {
                 if (this.state.emp.length < this.state.totalCount) {
-                    this.state.fetching = false;
+                    this.setState({fetching:false})
                     this.updateEmployees()
 
                 }
@@ -95,7 +115,7 @@ class ListEmployeeComponent extends Component {
 
                     }
                 )
-            return function () {
+            return () => {
                 document.removeEventListener('scroll', this.scrollHandler)
             }
         }
@@ -107,17 +127,16 @@ class ListEmployeeComponent extends Component {
         this.props.history.push('/add/employee')
     }
 
-    getHourseAndMinute(emp){
-        if(emp.operationMode!=null) {
-            var dateStart = new Date(emp.operationMode?.startDay)
-            var dateEnd = new Date(emp.operationMode?.endDay)
-            var options = {
-                timezone: 'UTC',
-                hour: 'numeric',
-                minute: 'numeric',
-            };
-            var startDay = dateStart.toLocaleString("ru", options)
-            var endDay = dateEnd.toLocaleString("ru", options)
+    getHourseAndMinute(emp:Employee){
+        const options = new Intl.DateTimeFormat('ru',{
+            hour: 'numeric',
+            minute: 'numeric',
+        });
+        if(emp.operationMode!=null && emp.operationMode.startDay!=undefined && emp.operationMode.endDay!=undefined ) {
+            let dateStart = new Date(emp.operationMode?.startDay)
+            let dateEnd = new Date(emp.operationMode?.endDay)
+            let startDay = options.format(dateStart)
+            let endDay = options.format(dateEnd)
             return startDay + '-' + endDay;
         }else return 'График не установлен'
     }
@@ -159,19 +178,21 @@ class ListEmployeeComponent extends Component {
                         <br/>
                         <Row>
                             <Col md={3}>
-                                <Select placeholder='Сортировать'  height='30' options={this.sortList} isSearchable={false}
+                                <Select placeholder='Сортировать'   options={this.sortList} isSearchable={false}
                                 onChange=
                                     {
                                         (event) =>
                                         {
-                                            this.setState({
-                                                sortBy: event['value']
-                                            },this.updateSelect)
+                                            if(event!=null) {
+                                                this.setState({
+                                                    sortBy: event['value']
+                                                }, this.updateSelect)
+                                            }
                                         }
                                     }/>
                             </Col>
                             <Col md={3}>
-                                <Select placeholder='Округ'  height='30' options={this.state.regions} isSearchable={true} isMulti
+                                <Select placeholder='Округ'   options={this.state.regions} isSearchable={true} isMulti
                                     onChange={
                                             (event)=>
                                             {
@@ -183,7 +204,7 @@ class ListEmployeeComponent extends Component {
                                 />
                             </Col>
                             <Col md={3}>
-                                <Select placeholder='Район'  height='30' options={this.state.districts} isSearchable={true} isMulti
+                                <Select placeholder='Район'   options={this.state.districts} isSearchable={true} isMulti
                                         onChange={
                                             (event)=>
                                             {

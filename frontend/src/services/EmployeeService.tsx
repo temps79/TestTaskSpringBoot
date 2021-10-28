@@ -1,4 +1,5 @@
 import axios from 'axios'
+import {Employee} from "../interface/EmployeeInterface";
 
 
 const EMPLOYEE_API_BASE_URL="http://localhost:8080/api/v1/employees"
@@ -8,7 +9,7 @@ const STAT_API_GET_URL="http://localhost:8080/api/v1/stat"
 const EMPLOYEE_API_POST_URL="http://localhost:8080/api/v1/add/employee"
 
 class EmployeeService  {
-    getFilterSortEmployees(currentPage,count_element,sortBy,districts,regions){
+    getFilterSortEmployees(currentPage: number, count_element: number, sortBy: any, districts: any, regions: any){
         return axios.get(EMPLOYEE_API_BASE_URL+`/${(currentPage)}/${count_element}${sortBy}/district=${districts}/region=${regions}`,{
             method:'GET',
             headers:{
@@ -17,7 +18,7 @@ class EmployeeService  {
             }
         });
     }
-    getEmployee(employeeId){
+    getEmployee(employeeId: string){
         return axios.get(EMPLOYEE_API_GET_URL+employeeId,{
             method:'GET',
             headers:{
@@ -26,7 +27,7 @@ class EmployeeService  {
             }
         });
     }
-    addEmployee(employee){
+    addEmployee(employee:Employee){
         return axios.post(EMPLOYEE_API_POST_URL, employee,{
             method:'GET',
             headers:{
@@ -44,7 +45,7 @@ class EmployeeService  {
             }
         });
     }
-    removeEmployee(employeeId){
+    removeEmployee(employeeId: string){
         return axios.get(EMPLOYEE_API_REMOVE_URL+employeeId,{
             method:'GET',
             headers:{

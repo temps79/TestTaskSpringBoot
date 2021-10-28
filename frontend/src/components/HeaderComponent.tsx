@@ -2,13 +2,18 @@ import React, {Component} from 'react';
 import {Button, Container, Nav, Navbar} from "react-bootstrap";
 import ApexChart from "./ApexChart";
 import ExportExcelComponent from "./ExportExcelComponent";
-import {Redirect, Route, Switch} from "react-router-dom";
+import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
 import RegistationComponent from "./RegistationComponent";
+import {History, LocationState} from "history";
+import { withRouter } from "react-router";
 
+interface IProps extends RouteComponentProps{
+}
 
+class HeaderComponent extends Component<IProps,{}> {
+    onHandle(){
 
-class HeaderComponent extends Component {
-
+    }
     render() {
         return (
             <div className="header">
@@ -46,4 +51,4 @@ class HeaderComponent extends Component {
     }
 }
 
-export default HeaderComponent;
+export default withRouter(HeaderComponent);

@@ -1,19 +1,29 @@
 import React, {Component} from 'react';
 import ListEmployeeComponent from "./ListEmployeeComponent";
 import 'bootstrap/dist/css/bootstrap.css'
-import {Redirect, Route, Switch} from "react-router-dom";
+import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
 import FormEmployee from "./FormEmployeeComponent";
 import AddFormEmployeeComponent from "./AddFormEmployeeComponent";
 import {Button, Form} from "react-bootstrap";
 import HeaderComponent from "./HeaderComponent";
 import FooterComponent from "./FooterComponent";
 import axios from "axios";
+import PropTypes from "prop-types";
+
+interface IProps {
+}
 
 
+interface IState {
+    username: string;
+    password:string;
+    isAuthenticated:boolean;
+    open:boolean;
+}
 
+class Login extends Component<IProps, IState> {
 
-class Login extends Component {
-    constructor(props) {
+    constructor(props:IProps) {
         super(props);
         this.state = {
             username: '',
@@ -22,10 +32,8 @@ class Login extends Component {
             open: false
         };
     }
-    handleChange = (event) => {
-        this.setState({[event.target.name] : event.target.value});
-    }
-    login = (e) => {
+
+    login = (e: React.KeyboardEvent<HTMLFormElement>) => {
         e.preventDefault()
         const user = {userName: this.state.username, password: this.state.password};
         axios.post("http://localhost:8080/login",user)
@@ -47,7 +55,7 @@ class Login extends Component {
             return (
                 <div>
                     {window.location.search!=''? <Redirect to='/'/>:''}
-                    <HeaderComponent/>
+                    <HeaderComponent />
                     <Switch>
                         <Route path='/employee/:id'  component={FormEmployee}></Route>
                         <Route path='/add/employee'  component={AddFormEmployeeComponent}></Route>
@@ -65,23 +73,29 @@ class Login extends Component {
                                 this.login(event)
                             }
                         }}>
-                        <Form.Group size="lg" controlId="login" >
+                        <Form.Group /*size="lg"*/ controlId="login" >
                             <Form.Label>Логин</Form.Label>
                             <Form.Control
                                 autoFocus
                                 name='username'
                                 type="username"
                                 value={this.state.username}
-                                onChange={this.handleChange}
+                                onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+                                    this.setState({username:event.target.value})
+                                    }
+                                }
                             />
                         </Form.Group>
-                        <Form.Group size="lg" controlId="password">
+                        <Form.Group /*size="lg"*/ controlId="password">
                             <Form.Label>Пароль</Form.Label>
                             <Form.Control
                                 name='password'
                                 type="password"
                                 value={this.state.password}
-                                onChange={this.handleChange}
+                                onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
+                                    this.setState({password:event.target.value})
+                                }
+                                }
                             />
                         </Form.Group>
                         <div className="d-grid gap-2">
