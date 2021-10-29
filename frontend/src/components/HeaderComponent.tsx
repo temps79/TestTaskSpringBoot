@@ -3,7 +3,7 @@ import {Button, Container, Nav, Navbar} from "react-bootstrap";
 import ApexChart from "./ApexChart";
 import ExportExcelComponent from "./ExportExcelComponent";
 import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
-import RegistationComponent from "./RegistationComponent";
+import RegistationComponent from "./authentication/RegistationComponent";
 import {History, LocationState} from "history";
 import { withRouter } from "react-router";
 

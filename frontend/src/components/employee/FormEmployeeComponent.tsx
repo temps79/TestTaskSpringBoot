@@ -1,12 +1,12 @@
 import React, {Component} from 'react';
-import EmployeeService from "../services/EmployeeService";
+import EmployeeService from "../../services/EmployeeService";
 import {ListGroup, Table,Button} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css'
 import {RouteComponentProps} from "react-router-dom";
-import {HomeAddress} from "../interface/HomeAddressInterface";
-import {OperationMode} from "../interface/OperationModeInterface";
-import {Employee} from "../interface/EmployeeInterface";
-import {Errors} from "../interface/ErrorsInterface";
+import {HomeAddress} from "../../interface/HomeAddressInterface";
+import {OperationMode} from "../../interface/OperationModeInterface";
+import {Employee} from "../../interface/EmployeeInterface";
+import {Errors} from "../../interface/ErrorsInterface";
 import {withRouter} from "react-router";
 
 
@@ -72,8 +72,8 @@ class FormEmployeeComponent extends Component<IProps, IState> {
                         this.state.employee?.homeAddresses!=null ?(
                             <Table responsive  >
                                 {
-                                    <tr>{this.state.employee?.homeAddresses?.region+','
-                                    +this.state.employee?.homeAddresses?.district+','
+                                    <tr>{this.state.employee!.homeAddresses!.district!.region?.region_name+','
+                                    +this.state.employee?.homeAddresses?.district?.district_name+','
                                     +this.state.employee?.homeAddresses?.address+';'}</tr>
                                 }
                             </Table>

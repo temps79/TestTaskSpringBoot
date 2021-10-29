@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
-import RegistrationService from "../services/RegistrationService";
+import RegistrationService from "../../services/RegistrationService";
 import {RouteComponentProps} from "react-router-dom";
-import {Employee} from "../interface/EmployeeInterface";
+import {Employee} from "../../interface/EmployeeInterface";
 import {withRouter} from "react-router";
-import {Errors} from "../interface/ErrorsInterface";
+import {Errors} from "../../interface/ErrorsInterface";
 
 interface IProps extends RouteComponentProps{
 }

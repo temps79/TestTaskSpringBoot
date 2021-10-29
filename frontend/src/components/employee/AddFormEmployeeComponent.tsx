@@ -1,16 +1,19 @@
-import React, {Component} from 'react';
-import EmployeeService from "../services/EmployeeService";
+import React, {Component, CSSProperties} from 'react';
+import EmployeeService from "../../services/EmployeeService";
 import {Button, Col, Form, Row} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css'
 import {Input} from "reactstrap";
 import Select from 'react-select';
 import {History, LocationState} from "history";
-import {HomeAddress} from "../interface/HomeAddressInterface";
-import {Employee} from "../interface/EmployeeInterface";
-import {Errors} from "../interface/ErrorsInterface";
-import {OperationMode} from "../interface/OperationModeInterface";
+import {HomeAddress} from "../../interface/HomeAddressInterface";
+import {Employee} from "../../interface/EmployeeInterface";
+import {Errors} from "../../interface/ErrorsInterface";
+import {OperationMode} from "../../interface/OperationModeInterface";
 import {RouteComponentProps} from "react-router-dom";
 import {withRouter} from "react-router";
+import {RegionOptionInterface} from "../../interface/RegionOptionInterface";
+import {GroupedOptionInterface} from "../../interface/GroupOptionInterface";
+import {groupedOptions} from "./docs/data";
 
 
 interface IProps extends RouteComponentProps{
@@ -27,47 +30,6 @@ interface IState {
 
 class AddFormEmployeeComponent extends Component<IProps, IState> {
 
-    district=[
-        {
-            region:'ЦАО',
-            districts:[
-            { label: 'Арбат', value: 'Арбат' },
-            { label: 'Замоскворечье', value: 'Замоскворечье' },
-            { label: 'Мещанский', value: 'Мещанский' },
-            { label: 'Таганский', value: 'Таганский' },
-            { label: 'Хамовники', value: 'Хамовники' },
-            ]
-        },
-        {
-            region:'ЗАО',
-            districts:[
-                { label: 'Кунцево', value: 'Кунцево' },
-                { label: 'Раменки', value: 'Раменки' },
-                { label: 'Можайский', value: 'Можайский' },
-                { label: 'Новопеределкино', value: 'Новопеределкино' },
-                { label: 'Очаково-Матвеевское', value: 'Очаково-Матвеевское' },
-                { label: 'Проспект Вернадского', value: 'Проспект Вернадского' }
-            ]
-        },
-        {
-            region:'ЮАО',
-            districts:[
-                { label: ' Южный округ', value: ' Южный округ' },
-                { label: 'Бирюлево Восточное', value: 'Бирюлево Восточное' },
-                { label: 'Бирюлево Западное', value: 'Бирюлево Западное' },
-                { label: 'Братеево', value: 'Братеево' },
-                { label: 'Даниловский', value: 'Даниловский' },
-                { label: 'Донской', value: 'Донской' },
-                { label: 'Зябликово', value: 'Зябликово' }
-            ]
-        }
-    ]
-
-    region = [
-        { label: 'ЦАО', value: 'ЦАО' },
-        { label: 'ЗАО', value: 'ЗАО' },
-        { label: 'ЮАО', value: 'ЮАО' },
-    ];
     constructor(props:IProps) {
         super(props);
 
@@ -176,27 +138,9 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
         this.setState({ employee });
     }
 
-    handleChangeAddress(field: keyof HomeAddress, e: any){
-        const target = e.target ;
-        let value;
-        if(e['value']!=null){
-            value=e['value'];
-        }else{
-            value=e.target.value
-        }
-        let homeAddresses:HomeAddress | undefined = this.state.homeAddresses;
-        if (homeAddresses) {
-            homeAddresses[field] = value;
-        }else{
-            homeAddresses={}
-            homeAddresses[field] = value;
-        }
-        this.setState({ homeAddresses });
-    }
     render() {
         return (
             <div>
-
                 <Form >
                     <label>ФИО</label>
                     <Input
@@ -224,27 +168,42 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
                                         <Input
                                             type="text"
                                             name="address"
-                                            onChange={this.handleChangeAddress.bind(this, "address")}
+                                            onChange={(event)=>{
+                                                let homeAddresses:HomeAddress | undefined = this.state.homeAddresses;
+                                                if(homeAddresses!=undefined)
+                                                    homeAddresses.address=event.target.value
+                                                this.setState({homeAddresses})
+                                            }}
                                             placeholder='Адрес'
                                         />
                                     </Col>
                                     <Col >{
-                                        // <Select
-                                        //     className="basic-single"
-                                        //     classNamePrefix="select"
-                                        //     placeholder='Выберите район'
-                                        //     defaultValue={'Арбат'}
-                                        //     options={this.district.find(i=>i.region==this.state.homeAddresses?.region)?.districts}
-                                        //     onChange={this.handleChangeAddress.bind(this, "district")}
-                                        //     isDisable={false}
-                                        // />
+                                        <Select<RegionOptionInterface | RegionOptionInterface, false, GroupedOptionInterface>
+                                            placeholder={'Выберите район...'}
+                                            options={groupedOptions}
+                                            onChange=
+                                                {
+                                                (event)=>{
+                                                    if(event!=null){
+                                                        let homeAddresses:HomeAddress | undefined = this.state.homeAddresses;
+                                                        if(homeAddresses==undefined) {
+                                                            homeAddresses={}
+                                                        }
+                                                        homeAddresses.district={
+                                                            region:{
+                                                                region_name : event.region
+                                                            },
+                                                            district_name:event.value
+                                                        }
+                                                        this.setState({homeAddresses})
+                                                        console.log(this.state)
+                                                    }
+                                                }
+                                            }
+                                        />
                                     }
                                     </Col>
-                                    <Col>
-                                        {/*<Select placeholder='Выберите округ'  height='100' options={this.region}*/}
-                                        {/*        onChange={this.handleChangeAddress.bind(this, "region")}*/}
-                                        {/*/>*/}
-                                    </Col>
+
                                 </Row>
                         </Form>
                     </div>

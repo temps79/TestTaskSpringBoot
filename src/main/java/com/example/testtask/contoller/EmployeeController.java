@@ -1,6 +1,9 @@
 package com.example.testtask.contoller;
 
+import com.example.testtask.entity.District;
 import com.example.testtask.entity.Employee;
+import com.example.testtask.entity.HomeAddresses;
+import com.example.testtask.entity.Region;
 import com.example.testtask.service.impl.IEmployeeService;
 import com.example.testtask.service.impl.IHomeAddressesService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,6 +37,22 @@ public class EmployeeController {
     }
     @PostMapping("/add/employee")
     public Employee createEmployee(@RequestBody Employee employee){
+        List<String> regions=homeAddressesService.getAllRegion();
+        if(regions.contains(employee.getHomeAddresses().getDistrict().getRegion().getRegion_name())){
+            List<String> districs=homeAddressesService.getAllDistrics();
+            District district;
+            if(districs.contains(employee.getHomeAddresses().getDistrict().getDistrict_name())){
+                district=homeAddressesService.getDistrict(employee.getHomeAddresses().getDistrict());
+            }else{
+                Region region=homeAddressesService.getRegion(employee.getHomeAddresses().getDistrict().getRegion());
+                district=employee.getHomeAddresses().getDistrict();
+                district.setRegion(region);
+                district=homeAddressesService.addDistrict(district);
+            }
+            HomeAddresses homeAddresses=employee.getHomeAddresses();
+            homeAddresses.setDistrict(district);
+            employee.setHomeAddresses(homeAddresses);
+        }
         return employeeService.addEmployee(employee);
     }
     @GetMapping("/remove/id={id}")

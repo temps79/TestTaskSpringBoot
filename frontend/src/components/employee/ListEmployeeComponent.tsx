@@ -1,19 +1,19 @@
 import React, {Component} from 'react';
 import {Link, RouteComponentProps} from "react-router-dom";
-import EmployeeService from "../services/EmployeeService";
-import HomeAddressesService from "../services/HomeAddressesService";
+import EmployeeService from "../../services/EmployeeService";
+import HomeAddressesService from "../../services/HomeAddressesService";
 import {Button, Col, Row} from "react-bootstrap";
 import Select from "react-select";
 import {Input} from "reactstrap";
-import {Errors} from "../interface/ErrorsInterface";
-import {Employee} from "../interface/EmployeeInterface";
+import {Errors} from "../../interface/ErrorsInterface";
+import {Employee} from "../../interface/EmployeeInterface";
 
 interface IProps extends RouteComponentProps{
 }
 
 interface IState {
     employees:Array<Employee>;
-    emp:Array<any>;
+    emp:Array<Employee>;
     currentPage:number;
     fetching:boolean;
     totalCount:number;
@@ -52,8 +52,8 @@ class ListEmployeeComponent extends Component<IProps, IState> {
     LIMIT=30
     sortList=[
         { label: 'имени', value: '/fullName' },
-        { label: 'округу', value: '/homeAddresses.region' },
-        { label: 'району', value: '/homeAddresses.district' },
+        { label: 'округу', value: '/homeAddresses.district.region.region_name' },
+        { label: 'району', value: '/homeAddresses.district.district_name' },
         { label: 'возрасту', value: '/age' },
     ]
 
@@ -69,6 +69,7 @@ class ListEmployeeComponent extends Component<IProps, IState> {
     updateEmployees(){
         EmployeeService.getFilterSortEmployees(this.state.currentPage,this.LIMIT,this.state.sortBy,this.state.selectDistricts,this.state.selectRegions)
             .then(response=>{
+
                     this.setState({
                         emp:this.state.emp.concat(response.data),
                         currentPage:this.state.currentPage+1,
@@ -107,6 +108,7 @@ class ListEmployeeComponent extends Component<IProps, IState> {
             document.addEventListener('scroll', this.scrollHandler)
             EmployeeService.getFilterSortEmployees(this.state.currentPage,this.LIMIT,this.state.sortBy,this.state.selectDistricts,this.state.selectRegions)
                 .then(response=>{
+                    console.log(response.data)
                         this.setState({
                             emp:response.data,
                             totalCount:response.headers['x-total-count'],
@@ -243,10 +245,10 @@ class ListEmployeeComponent extends Component<IProps, IState> {
                                             {employee.homeAddresses?.address}
                                         </td>
                                         <td>
-                                            { employee.homeAddresses?.district}
+                                            { employee.homeAddresses?.district?.district_name}
                                         </td>
                                         <td>
-                                            { employee.homeAddresses?.region}
+                                            { employee.homeAddresses?.district?.region?.region_name}
                                         </td>
                                         <td>
                                             {this.getHourseAndMinute(employee)}

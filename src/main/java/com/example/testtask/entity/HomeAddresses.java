@@ -17,19 +17,17 @@ public class HomeAddresses {
     @Column(name="address")
     private String address;
 
-    @Column(name="district")
-    private String district;
+    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    private District district;
 
-    @Column(name="region")
-    private String region;
+
 
     @Override
     public String toString() {
         return "HomeAddressesEntity{" +
                 "id=" + adr_id +
                 ", address='" + address + '\'' +
-                ", district='" + district + '\'' +
-                ", region='" + region + '\'' +
+                ", district='" + district+ '\'' +
                 '}';
     }
 }

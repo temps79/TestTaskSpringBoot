@@ -16,7 +16,7 @@ import java.util.Map;
 @Transactional
 @Repository
 public interface EmployeeRepository extends PagingAndSortingRepository<Employee, Long>  {
-    @Query("from Employee e where e.homeAddresses.district IN(:district) OR e.homeAddresses.region IN(:regions) ")
+    @Query("from Employee e where e.homeAddresses.district.district_name IN(:district) OR e.homeAddresses.district.region.region_name IN(:regions) ")
     Page<Employee> getFilter(@Param("district") List<String> district,@Param("regions") List<String> regions,Pageable pageable);
     @Query("select e.age ,count(e.age) from Employee e group by e.age  order by e.age")
     List<Object[]> getStat();

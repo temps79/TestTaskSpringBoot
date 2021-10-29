@@ -1,14 +1,13 @@
 import React, {Component} from 'react';
-import ListEmployeeComponent from "./ListEmployeeComponent";
+import ListEmployeeComponent from "../employee/ListEmployeeComponent";
 import 'bootstrap/dist/css/bootstrap.css'
-import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
-import FormEmployee from "./FormEmployeeComponent";
-import AddFormEmployeeComponent from "./AddFormEmployeeComponent";
+import {Redirect, Route, Switch} from "react-router-dom";
+import FormEmployee from "../employee/FormEmployeeComponent";
+import AddFormEmployeeComponent from "../employee/AddFormEmployeeComponent";
 import {Button, Form} from "react-bootstrap";
-import HeaderComponent from "./HeaderComponent";
-import FooterComponent from "./FooterComponent";
+import HeaderComponent from "../HeaderComponent";
+import FooterComponent from "../FooterComponent";
 import axios from "axios";
-import PropTypes from "prop-types";
 
 interface IProps {
 }
