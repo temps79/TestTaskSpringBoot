@@ -1,13 +1,11 @@
 import React, {Component} from 'react';
 import EmployeeService from "../../services/EmployeeService";
-import {ListGroup, Table,Button} from "react-bootstrap";
+import {ListGroup, Table, Button, Form, Row, Col} from "react-bootstrap";
 import 'bootstrap/dist/css/bootstrap.css'
 import {RouteComponentProps} from "react-router-dom";
-import {HomeAddress} from "../../interface/HomeAddressInterface";
-import {OperationMode} from "../../interface/OperationModeInterface";
 import {Employee} from "../../interface/EmployeeInterface";
-import {Errors} from "../../interface/ErrorsInterface";
 import {withRouter} from "react-router";
+import UpdateFormEmployeeComponent from "./UpdateFormEmployeeComponent";
 
 
 interface IProps extends RouteComponentProps{
@@ -15,9 +13,12 @@ interface IProps extends RouteComponentProps{
 
 interface IState {
     employee:Employee;
+    editOnly:boolean;
 }
 
 class FormEmployeeComponent extends Component<IProps, IState> {
+
+
     constructor(props:IProps) {
         super(props);
 
@@ -25,8 +26,10 @@ class FormEmployeeComponent extends Component<IProps, IState> {
             employee:{
                 fullName:'',
                 age:0
-            }
+            },
+            editOnly:false
         }
+        this.handler=this.handler.bind(this)
     }
     cancel(){
         this.props.history.push('/')
@@ -42,6 +45,7 @@ class FormEmployeeComponent extends Component<IProps, IState> {
             this.setState({employee:res.data});
 
         });
+
 
     }
     getHourseAndMinute(emp: Employee){
@@ -61,38 +65,51 @@ class FormEmployeeComponent extends Component<IProps, IState> {
         }
 
     }
+    handler(){
+        this.setState({editOnly:false})
+    }
     render() {
-        return (
-            <div>
-                <h2 className='text-center'>Cотрудник</h2>
-                <ListGroup >
-                    <ListGroup.Item >ФИО:{this.state.employee.fullName}</ListGroup.Item>
-                    <ListGroup.Item >Возраст:{this.state.employee.age}</ListGroup.Item>
-                    <ListGroup.Item > Домашний адрес:{
-                        this.state.employee?.homeAddresses!=null ?(
-                            <Table responsive  >
-                                {
-                                    <tr>{this.state.employee!.homeAddresses!.district!.region?.region_name+','
-                                    +this.state.employee?.homeAddresses?.district?.district_name+','
-                                    +this.state.employee?.homeAddresses?.address+';'}</tr>
-                                }
-                            </Table>
-                        ):' адресов нет'
-                    }
-                    </ListGroup.Item>
-                    <ListGroup.Item >График работы:{
-                        this.state.employee.operationMode != null ?
-                         this.getHourseAndMinute(this.state.employee)
-                        :
-                        'График не установлен'
-                    }</ListGroup.Item>
-                </ListGroup>
-                <br/>
-                <Button variant="outline-dark" onClick={this.cancel.bind(this)}>Вернуться к списку сотрудников</Button>{' '}
-                <Button variant="outline-danger" onClick={this.remove.bind(this)}>Удалить</Button>
-
-            </div>
-        );
+        if(this.state.editOnly)
+        {
+            return (
+                <div>
+                    <UpdateFormEmployeeComponent employee={this.state.employee} handler={this.handler}/>
+                </div>
+            );
+        }
+        else{
+            return (
+                <div>
+                    <h2 className='text-center'>Cотрудник</h2>
+                    <ListGroup >
+                        <ListGroup.Item >ФИО:{this.state.employee.fullName}</ListGroup.Item>
+                        <ListGroup.Item >Возраст:{this.state.employee.age}</ListGroup.Item>
+                        <ListGroup.Item > Домашний адрес:{
+                            this.state.employee?.homeAddresses!=null ?(
+                                <Table responsive  >
+                                    {
+                                        <tr>{this.state.employee!.homeAddresses!.district!.region?.region_name+','
+                                        +this.state.employee?.homeAddresses?.district?.district_name+','
+                                        +this.state.employee?.homeAddresses?.address+';'}</tr>
+                                    }
+                                </Table>
+                            ):' адресов нет'
+                        }
+                        </ListGroup.Item>
+                        <ListGroup.Item >График работы:{
+                            this.state.employee.operationMode != null ?
+                                this.getHourseAndMinute(this.state.employee)
+                                :
+                                'График не установлен'
+                        }</ListGroup.Item>
+                    </ListGroup>
+                    <br/>
+                    <Button variant="outline-dark" onClick={this.cancel.bind(this)}>Вернуться к списку сотрудников</Button>{' '}
+                    <Button variant="outline-dark" onClick={()=>{this.setState({editOnly:true})}}>Редактировать</Button>{' '}
+                    <Button variant="outline-danger" onClick={this.remove.bind(this)}>Удалить</Button>{' '}
+                </div>
+            );
+        }
     }
 }
 

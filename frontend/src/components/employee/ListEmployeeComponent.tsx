@@ -108,7 +108,6 @@ class ListEmployeeComponent extends Component<IProps, IState> {
             document.addEventListener('scroll', this.scrollHandler)
             EmployeeService.getFilterSortEmployees(this.state.currentPage,this.LIMIT,this.state.sortBy,this.state.selectDistricts,this.state.selectRegions)
                 .then(response=>{
-                    console.log(response.data)
                         this.setState({
                             emp:response.data,
                             totalCount:response.headers['x-total-count'],

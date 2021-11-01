@@ -1,8 +1,12 @@
 package com.example.testtask.service;
 
+import com.example.testtask.entity.District;
+import com.example.testtask.entity.Region;
 import com.example.testtask.repository.EmployeeRepository;
 import com.example.testtask.entity.Employee;
+import com.example.testtask.repository.HomeAdressesRepository;
 import com.example.testtask.service.impl.IEmployeeService;
+import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +23,8 @@ import java.util.Optional;
 public class EmployeeService implements IEmployeeService {
     @Autowired
     private EmployeeRepository employeeRepository;
+    @Autowired
+    private HomeAdressesRepository homeAdressesRepository;
 
     @Override
     public List<Employee> getAllEmployees() {
@@ -35,16 +41,18 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
-    public Employee updateEmployee(Employee employee) {
-        Employee newEmploye=new Employee();
+    public Employee updateEmployee(long id,Employee employee) {
+        Employee employeeById=getEmployeeById(id);
 
-        newEmploye.setFullName(employee.getFullName());
-        newEmploye.setAge(employee.getAge());
-        newEmploye.setEmp_id(employee.getEmp_id());
-        newEmploye.setOperationMode(employee.getOperationMode());
-        newEmploye.setHomeAddresses(employee.getHomeAddresses());
+        employeeById.setFullName(employee.getFullName());
+        employeeById.setAge(employee.getAge());
+        employeeById.setOperationMode(employee.getOperationMode());
+        employeeById.getHomeAddresses().getDistrict().setDistrict_name(employee.getHomeAddresses().getDistrict().getDistrict_name());
+        employeeById.getHomeAddresses().setAddress(employee.getHomeAddresses().getAddress());
+        Region region=homeAdressesRepository.getRegion(employee.getHomeAddresses().getDistrict().getRegion().getRegion_name());
+        employeeById.getHomeAddresses().getDistrict().setRegion(region==null?employee.getHomeAddresses().getDistrict().getRegion() : region);
 
-        return employeeRepository.save(employee);
+        return employeeRepository.save(employeeById);
     }
 
     @Override

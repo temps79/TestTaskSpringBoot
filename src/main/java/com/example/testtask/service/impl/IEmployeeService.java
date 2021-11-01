@@ -11,7 +11,7 @@ public interface IEmployeeService {
     List<Employee> getAllEmployees();
     Employee getEmployeeById(long employeeId);
     Employee addEmployee(Employee employee);
-    Employee updateEmployee(Employee employee);
+    Employee updateEmployee(long id,Employee employee);
     void deleteEmployee(long employeeId);
     List<Employee> findPaginated(int pageNo, int pageSize);
     List<Employee> getAllEmployeesSortBy(int pageNo, int pageSize,String sortBy);

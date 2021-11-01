@@ -196,7 +196,6 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
                                                             district_name:event.value
                                                         }
                                                         this.setState({homeAddresses})
-                                                        console.log(this.state)
                                                     }
                                                 }
                                             }
@@ -228,8 +227,8 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
                     />
                     <span style={{ color: "red" }}>{this.state.errors["endDay"]}<br/><br/></span>
 
-                    <Button variant="outline-dark"   onClick={this.addEmployee}>Добавить</Button>{' '}
-                    <Button variant="outline-danger" onClick={this.cancel.bind(this)}  >Вернуться к списку сотрудников</Button>
+                    <Button variant="outline-success"   onClick={this.addEmployee}>Добавить</Button>{' '}
+                    <Button variant="outline-dark" onClick={this.cancel.bind(this)}  >Вернуться к списку сотрудников</Button>
                 </Form>
             </div>
 

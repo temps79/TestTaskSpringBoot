@@ -30,6 +30,10 @@ public class EmployeeController {
         List<Employee> list = employeeService.getAllEmployees();
         return list;
     }
+    @PutMapping("edit/employee/id={id}")
+    public ResponseEntity<Employee> updateEmployee(@PathVariable long id,@RequestBody Employee employee){
+        return ResponseEntity.ok(employeeService.updateEmployee(id,employee));
+    }
     @GetMapping("/employee/id={id}")
     public ResponseEntity<Employee> getEmployeeById(@PathVariable long id){
         Employee employee=employeeService.getEmployeeById(id);

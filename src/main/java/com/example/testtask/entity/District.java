@@ -18,7 +18,7 @@ public class District {
     @Column(name="district_name")
     private String district_name;
 
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.PERSIST)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
     private Region region;
 
     @Override
