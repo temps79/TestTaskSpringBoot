@@ -42,20 +42,25 @@ public class EmployeeController {
     @PostMapping("/add/employee")
     public Employee createEmployee(@RequestBody Employee employee){
         List<String> regions=homeAddressesService.getAllRegion();
-        if(regions.contains(employee.getHomeAddresses().getDistrict().getRegion().getRegion_name())){
-            List<String> districs=homeAddressesService.getAllDistrics();
-            District district;
-            if(districs.contains(employee.getHomeAddresses().getDistrict().getDistrict_name())){
-                district=homeAddressesService.getDistrict(employee.getHomeAddresses().getDistrict());
-            }else{
-                Region region=homeAddressesService.getRegion(employee.getHomeAddresses().getDistrict().getRegion());
-                district=employee.getHomeAddresses().getDistrict();
-                district.setRegion(region);
-                district=homeAddressesService.addDistrict(district);
+        try {
+            if (regions.contains(employee.getHomeAddresses().getDistrict().getRegion().getRegion_name())) {
+                List<String> districs = homeAddressesService.getAllDistrics();
+                District district;
+                if (districs.contains(employee.getHomeAddresses().getDistrict().getDistrict_name())) {
+                    district = homeAddressesService.getDistrict(employee.getHomeAddresses().getDistrict());
+                } else {
+                    Region region = homeAddressesService.getRegion(employee.getHomeAddresses().getDistrict().getRegion());
+                    district = employee.getHomeAddresses().getDistrict();
+                    district.setRegion(region);
+                    district = homeAddressesService.addDistrict(district);
+                }
+                HomeAddresses homeAddresses = employee.getHomeAddresses();
+                homeAddresses.setDistrict(district);
+                employee.setHomeAddresses(homeAddresses);
             }
-            HomeAddresses homeAddresses=employee.getHomeAddresses();
-            homeAddresses.setDistrict(district);
-            employee.setHomeAddresses(homeAddresses);
+        }
+        catch (NullPointerException e){
+
         }
         return employeeService.addEmployee(employee);
     }
@@ -82,11 +87,9 @@ public class EmployeeController {
                 , districts
                 , regions);
         if(districts.isEmpty() && regions.isEmpty()) {
-            list =employeeService.getFilter(pageNo, pageSize,
-                      sortBy == null ? "fullName" : sortBy
-                      , districts.isEmpty() ? homeAddressesService.getAllDistrics() : districts
-                      , regions.isEmpty() ? homeAddressesService.getAllRegion() : regions);
+            list =employeeService.getFilter(pageNo, pageSize, sortBy == null ? "fullName" : sortBy);
         }
+
         return ResponseEntity.ok()
                 .headers(responseHeaders)
                 .body(list);

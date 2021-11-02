@@ -14,6 +14,8 @@ import {withRouter} from "react-router";
 import {RegionOptionInterface} from "../../interface/RegionOptionInterface";
 import {GroupedOptionInterface} from "../../interface/GroupOptionInterface";
 import {groupedOptions} from "./docs/data";
+import {observer} from "mobx-react";
+import {AppContext} from "../../AppContext";
 
 
 interface IProps extends RouteComponentProps{
@@ -27,9 +29,9 @@ interface IState {
     errors:Errors;
 }
 
-
+@observer
 class AddFormEmployeeComponent extends Component<IProps, IState> {
-
+    static contextType = AppContext;
     constructor(props:IProps) {
         super(props);
 
@@ -50,7 +52,6 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
                 fullName: this.state.employee.fullName,
                 age: this.state.employee.age,
             };
-
             if(JSON.stringify(this.state.operationMode)!='{}'){
                 employee.operationMode=this.state.operationMode;
             }
@@ -58,8 +59,11 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
                 employee.homeAddresses=this.state.homeAddresses;
             }
             EmployeeService.addEmployee(employee).then(res => {
+                this.context.applicationStore.initEmployees()
                 console.log('addEmployee:'+JSON.stringify(res.data['emp_id']))
-                this.props.history.push(`/employee/id=${res.data['emp_id']}`);
+                console.log()
+                let emp:Employee=res.data
+                this.props.history.push(`/employee/id=${res.data['emp_id']}`,emp);
             });
         }
 
@@ -101,6 +105,7 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
     handleValidation() {
         let employee = this.state.employee;
         let operationMode=this.state.operationMode;
+        let homeAddress=this.state.homeAddresses
         let errors:Errors = {};
         let formIsValid = true;
         if (!employee["fullName"]) {
@@ -124,6 +129,10 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
                 formIsValid = false;
                 errors.endDay = "Не может быть пустым";
             }
+        }
+        if(JSON.stringify(homeAddress)=='{}') {
+            formIsValid = false;
+            errors.homeAddress = "Выберите район";
         }
 
         this.setState({ errors: errors });
@@ -201,6 +210,7 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
                                             }
                                         />
                                     }
+                                    <span style={{ color: "red" }}>{this.state.errors["homeAddress"]}</span>
                                     </Col>
 
                                 </Row>

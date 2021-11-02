@@ -17,6 +17,7 @@ public interface IEmployeeService {
     List<Employee> getAllEmployeesSortBy(int pageNo, int pageSize,String sortBy);
 
     List<Employee> getFilter(int pageNo, int pageSize, String sortBy,@Param("district") List<String> district,@Param("regions") List<String> regions);
+    List<Employee> getFilter(int pageNo, int pageSize, String sortBy);
 
     Map<Object,Object> getStat();
 

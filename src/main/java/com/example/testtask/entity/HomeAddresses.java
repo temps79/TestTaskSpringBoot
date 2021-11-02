@@ -17,7 +17,7 @@ public class HomeAddresses {
     @Column(name="address")
     private String address;
 
-    @ManyToOne(fetch = FetchType.EAGER,cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
     private District district;
 
 

@@ -85,6 +85,13 @@ public class EmployeeService implements IEmployeeService {
     }
 
     @Override
+    public List<Employee> getFilter(int pageNo, int pageSize, String sortBy) {
+        Pageable paging = PageRequest.of(pageNo, pageSize,Sort.by(sortBy));
+        Page<Employee> pagedResult = employeeRepository.getFilter(paging);
+        return pagedResult.toList();
+    }
+
+    @Override
     public Map<Object,Object> getStat() {
         Map<Object, Object> map=new LinkedHashMap<>();
         for(Object[] obj:employeeRepository.getStat()){

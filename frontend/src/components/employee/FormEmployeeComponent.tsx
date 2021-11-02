@@ -6,6 +6,9 @@ import {RouteComponentProps} from "react-router-dom";
 import {Employee} from "../../interface/EmployeeInterface";
 import {withRouter} from "react-router";
 import UpdateFormEmployeeComponent from "./UpdateFormEmployeeComponent";
+import {observer} from "mobx-react";
+import {AppContext} from "../../AppContext";
+
 
 
 interface IProps extends RouteComponentProps{
@@ -16,12 +19,11 @@ interface IState {
     editOnly:boolean;
 }
 
+@observer
 class FormEmployeeComponent extends Component<IProps, IState> {
-
-
+    static contextType = AppContext;
     constructor(props:IProps) {
         super(props);
-
         this.state={
             employee:{
                 fullName:'',
@@ -37,16 +39,22 @@ class FormEmployeeComponent extends Component<IProps, IState> {
     remove(){
         let id =this.props.location.pathname.substr(this.props.location.pathname.lastIndexOf('id=')+3)
         EmployeeService.removeEmployee(id)
+        this.context.applicationStore.initEmployees()
         this.props.history.push('/')
+
     }
     componentDidMount() {
         let id =this.props.location.pathname.substr(this.props.location.pathname.lastIndexOf('id=')+3)
-        EmployeeService.getEmployee(id).then((res)=> {
-            this.setState({employee:res.data});
-
-        });
-
-
+        // let employee=this.context.applicationStore.employees.filter((emp: Employee)=>{
+        //    return emp.emp_id==Number(id)
+        // })
+        console.log(this.props.history.location.state)
+        if(this.props.history.location.state==undefined){
+            this.setState({employee: this.context.applicationStore.getEmployeeById(id)});
+        }else {
+            // @ts-ignore
+            this.setState({editOnly: false, employee: this.props.history.location.state});
+        }
     }
     getHourseAndMinute(emp: Employee){
         const options = new Intl.DateTimeFormat('ru',{

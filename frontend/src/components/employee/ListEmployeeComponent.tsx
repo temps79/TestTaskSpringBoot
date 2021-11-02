@@ -1,55 +1,47 @@
 import React, {Component} from 'react';
 import {Link, RouteComponentProps} from "react-router-dom";
-import EmployeeService from "../../services/EmployeeService";
 import HomeAddressesService from "../../services/HomeAddressesService";
 import {Button, Col, Row} from "react-bootstrap";
 import Select from "react-select";
 import {Input} from "reactstrap";
-import {Errors} from "../../interface/ErrorsInterface";
 import {Employee} from "../../interface/EmployeeInterface";
+import { observer} from "mobx-react";
+
+import {AppContext} from "../../AppContext";
+
+
 
 interface IProps extends RouteComponentProps{
 }
 
 interface IState {
-    employees:Array<Employee>;
-    emp:Array<Employee>;
-    currentPage:number;
-    fetching:boolean;
-    totalCount:number;
     value:string;
     sortBy:string;
     districts:Array<any>;
     regions:Array<any>;
     selectRegions:Array<any>;
     selectDistricts:Array<any>;
-    open:boolean;
 }
 
-class ListEmployeeComponent extends Component<IProps, IState> {
 
+@observer
+class ListEmployeeComponent extends Component<IProps, IState> {
+    static contextType = AppContext;
     constructor(props:IProps) {
         super(props);
 
         this.state={
-            employees:[],
-            emp:[],
-            currentPage:0,
-            fetching:true,
-            totalCount:0,
             value:'',
             sortBy:'',
             districts:[],
             regions:[],
             selectRegions:[],
             selectDistricts:[],
-            open:false
         }
         this.getEmployee=this.getEmployee.bind(this);
         this.addEmployee=this.addEmployee.bind(this);
     }
 
-    LIMIT=30
     sortList=[
         { label: 'имени', value: '/fullName' },
         { label: 'округу', value: '/homeAddresses.district.region.region_name' },
@@ -57,65 +49,40 @@ class ListEmployeeComponent extends Component<IProps, IState> {
         { label: 'возрасту', value: '/age' },
     ]
 
-    convertToOptions(array: any[]){
-        let new_array: { label: string; value: string; }[]=[]
-        array.map(obj=>{
-            new_array.push({'label':`${obj}`,'value':`${obj}`})
-        })
 
-        return new_array;
-    }
-
-    updateEmployees(){
-        EmployeeService.getFilterSortEmployees(this.state.currentPage,this.LIMIT,this.state.sortBy,this.state.selectDistricts,this.state.selectRegions)
-            .then(response=>{
-
-                    this.setState({
-                        emp:this.state.emp.concat(response.data),
-                        currentPage:this.state.currentPage+1,
-                        totalCount:response.headers['x-total-count'],
-                        fetching:true
-                    })
-                }
-            )
-    }
     scrollHandler =(e:any)=>{
-        if(this.state.fetching) {
-            if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 50) {
-                if (this.state.emp.length < this.state.totalCount) {
-                    this.setState({fetching:false})
-                    this.updateEmployees()
-
+        if(window.location.pathname!='/'){
+            document.removeEventListener('scroll', this.scrollHandler)
+        }
+        if(this.context.applicationStore.fetching) {
+            if (e.target.documentElement.scrollHeight - (e.target.documentElement.scrollTop + window.innerHeight) < 60) {
+                if (this.context.applicationStore.employees.length < this.context.applicationStore.totalCount) {
+                   this.context.applicationStore.setFetching(false)
+                    this.context.applicationStore.updateEmployees(this.state.sortBy,
+                        this.state.selectDistricts,this.state.selectRegions)
+                }else{
+                    document.removeEventListener('scroll', this.scrollHandler)
                 }
             }
         }
     }
 
-
+    convertToOptions(array: any[]){
+        let new_array: { label: string; value: string; }[]=[]
+        array.map(obj=>{
+            new_array.push({'label':`${obj}`,'value':`${obj}`})
+        })
+        return new_array;
+    }
     componentDidMount() {
-        HomeAddressesService.getAllRegion().then((res)=>{
-            this.setState({
-                regions:this.convertToOptions(res.data)
-            })
-        })
         HomeAddressesService.getAllDistricts().then((res)=>{
-            this.setState({
-                districts:this.convertToOptions(res.data)
-            })
+            this.setState({districts:this.convertToOptions(res.data)})
         })
-
-        if(this.state.fetching) {
+        HomeAddressesService.getAllRegion().then((res)=>{
+            this.setState({regions:this.convertToOptions(res.data)})
+        })
+        if(this.context.applicationStore.fetching) {
             document.addEventListener('scroll', this.scrollHandler)
-            EmployeeService.getFilterSortEmployees(this.state.currentPage,this.LIMIT,this.state.sortBy,this.state.selectDistricts,this.state.selectRegions)
-                .then(response=>{
-                        this.setState({
-                            emp:response.data,
-                            totalCount:response.headers['x-total-count'],
-                            currentPage:1
-                        },)
-
-                    }
-                )
             return () => {
                 document.removeEventListener('scroll', this.scrollHandler)
             }
@@ -142,23 +109,12 @@ class ListEmployeeComponent extends Component<IProps, IState> {
         }else return 'График не установлен'
     }
     filtredEmployees() {
-        var filterArray=this.state.emp.filter(employee => {
+        let filterArray=this.context.applicationStore.employees.filter((employee: { fullName: string; }) => {
             return employee.fullName.toLowerCase().includes(this.state.value.toLowerCase());
         })
         return filterArray
     }
-    updateSelect = () => {
-        EmployeeService.getFilterSortEmployees(0,this.LIMIT,this.state.sortBy,
-            this.state.selectDistricts.toLocaleString(),this.state.selectRegions.toLocaleString())
-            .then((res)=>
-            {
-                this.setState(
-                    {
-                        emp: res.data,
-                        currentPage: 1
-                    },)
-            })
-    }
+
 
     render() {
         return (
@@ -187,31 +143,47 @@ class ListEmployeeComponent extends Component<IProps, IState> {
                                             if(event!=null) {
                                                 this.setState({
                                                     sortBy: event['value']
-                                                }, this.updateSelect)
+                                                },()=>{
+                                                    this.context.applicationStore.updateSelect(this.state.sortBy,this.state.selectDistricts,this.state.selectRegions)
+                                                })
                                             }
                                         }
-                                    }/>
+                                    }
+                                />
                             </Col>
                             <Col md={3}>
-                                <Select placeholder='Округ'   options={this.state.regions} isSearchable={true} isMulti
+                                <Select
+                                    placeholder='Округ'
+                                    options={this.state.regions}
+                                    isSearchable={true} isMulti
                                     onChange={
                                             (event)=>
                                             {
                                                 this.setState({
-                                                    selectRegions: event.map(e => e.value)
-                                                },this.updateSelect)
+                                                    selectRegions: event.map(e => (
+                                                        e.value
+                                                    ))
+                                                },()=>{
+                                                    this.context.applicationStore.updateSelect(this.state.sortBy,this.state.selectDistricts,this.state.selectRegions)
+                                                })
                                             }
                                         }
+
                                 />
                             </Col>
                             <Col md={3}>
-                                <Select placeholder='Район'   options={this.state.districts} isSearchable={true} isMulti
+                                <Select placeholder='Район'
+                                        options={this.state.districts}
+                                        isSearchable={true}
+                                        isMulti
                                         onChange={
                                             (event)=>
                                             {
                                                 this.setState({
                                                     selectDistricts: event.map(e => e.value)
-                                                },this.updateSelect)
+                                                },()=> {
+                                                    this.context.applicationStore.updateSelect(this.state.sortBy, this.state.selectDistricts, this.state.selectRegions)
+                                                })
                                             }
                                         }
                                 />
@@ -236,9 +208,9 @@ class ListEmployeeComponent extends Component<IProps, IState> {
                         <tbody>
                         {
                             this.filtredEmployees().length > 0 ? (
-                                this.filtredEmployees().map(employee => (
+                                 this.filtredEmployees().map((employee: Employee) => (
                                     <tr key={employee.emp_id}>
-                                        <td><Link to={`/employee/id=${employee.emp_id}` }>{employee.fullName} </Link></td>
+                                        <td><Link to={`/employee/id=${employee.emp_id}` } >{employee.fullName} </Link></td>
                                         <td>{employee.age}</td>
                                         <td>
                                             {employee.homeAddresses?.address}

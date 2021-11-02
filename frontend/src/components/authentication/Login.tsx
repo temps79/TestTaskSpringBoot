@@ -8,6 +8,7 @@ import {Button, Form} from "react-bootstrap";
 import HeaderComponent from "../HeaderComponent";
 import FooterComponent from "../FooterComponent";
 import axios from "axios";
+import {AppContext} from "../../AppContext";
 
 interface IProps {
 }
@@ -20,8 +21,10 @@ interface IState {
     open:boolean;
 }
 
-class Login extends Component<IProps, IState> {
 
+
+class Login extends Component<IProps, IState> {
+    static contextType = AppContext;
     constructor(props:IProps) {
         super(props);
         this.state = {
@@ -53,7 +56,9 @@ class Login extends Component<IProps, IState> {
         if (sessionStorage.getItem("jwt")) {
             return (
                 <div>
-                    {window.location.search!=''? <Redirect to='/'/>:''}
+                    {this.context.applicationStore.initEmployees()}
+
+                    {window.location.search!=''? (<Redirect to='/'/>):''}
                     <HeaderComponent />
                     <Switch>
                         <Route path='/employee/:id'  component={FormEmployee}></Route>

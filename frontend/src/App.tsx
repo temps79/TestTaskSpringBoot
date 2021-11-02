@@ -5,19 +5,23 @@ import Login from "./components/authentication/Login";
 import {
     BrowserRouter as Router,
 } from "react-router-dom";
+import {AppContext, stores} from "./AppContext";
 
 
 
-
-function App(){
-    return (
-        <div>
-            <Router>
-                <div className='content' >
-                    <Login />
-                </div>
-            </Router>
-        </div>
-    );
+export class App extends React.Component {
+    render() {
+        return (
+            <div>
+                <AppContext.Provider value={stores}>
+                    <Router>
+                        <div className='content' >
+                            <Login />
+                        </div>
+                    </Router>
+                </AppContext.Provider>
+            </div>
+        )
+    }
 }
 export  default App

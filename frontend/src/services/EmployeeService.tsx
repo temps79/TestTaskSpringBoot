@@ -10,10 +10,10 @@ const STAT_API_GET_URL="http://localhost:8080/api/v1/stat"
 const EMPLOYEE_API_POST_URL="http://localhost:8080/api/v1/add/employee"
 
 class EmployeeService  {
-    getFilterSortEmployees(currentPage: number, count_element: number, sortBy: any, districts: any, regions: any){
-        return axios.get(EMPLOYEE_API_BASE_URL+`/${(currentPage)}/${count_element}${sortBy}/district=${districts}/region=${regions}`,{
-            method:'GET',
-            headers:{
+    getFilterSortEmployees(currentPage: number, count_element: number, sortBy: any, districts: any, regions: any) {
+        return axios.get(EMPLOYEE_API_BASE_URL + `/${(currentPage)}/${count_element}${sortBy}/district=${districts}/region=${regions}`, {
+            method: 'GET',
+            headers: {
                 "Authorization": sessionStorage.getItem("jwt"),
                 "Content-Type": "application/json"
             }

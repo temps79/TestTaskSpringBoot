@@ -11,6 +11,7 @@ import {Employee} from "../../interface/EmployeeInterface";
 import {Errors} from "../../interface/ErrorsInterface";
 import EmployeeService from "../../services/EmployeeService";
 import {withRouter} from "react-router";
+import {AppContext} from "../../AppContext";
 
 interface IProps extends RouteComponentProps{
     employee:Employee;
@@ -22,9 +23,12 @@ interface IState {
     errors:Errors;
 }
 
+
 class UpdateFormEmployeeComponent extends Component<IProps, IState> {
+    static contextType = AppContext;
     constructor(props:IProps) {
         super(props);
+
 
         this.state={
             employee:props.employee,
@@ -55,8 +59,6 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
         let date = new Date();
         date.setHours(Number(hourse),Number(minute));
         let tempDate=this.state.employee.operationMode
-        console.log(JSON.stringify(tempDate?.startDay))
-        console.log(JSON.stringify(tempDate?.startDay)=='null')
         if(tempDate==null)
             tempDate={}
         if (target.name == 'startDay') {
@@ -87,9 +89,10 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
         e.preventDefault();
         if(this.handleValidation()) {
             EmployeeService.updateEmployee(this.state.employee.emp_id,this.state.employee).then(res => {
-                this.props.history.push(`/employee/id=${res.data['emp_id']}`);
+                this.props.history.push(`/employee/id=${res.data['emp_id']}`,res.data);
             });
             this.props.handler()
+            this.context.applicationStore.initEmployees()
         }
     }
     handleValidation() {
