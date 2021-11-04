@@ -1,7 +1,8 @@
-import {DistrictInterface} from "./DistrictInterface";
+
+import {TerritoryInterface} from "./TerritoryInterface";
 
 export interface HomeAddress{
     adr_id?:number;
     address?:string;
-    district?:DistrictInterface;
+    territory?:TerritoryInterface;
 }

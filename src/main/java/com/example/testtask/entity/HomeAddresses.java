@@ -17,17 +17,17 @@ public class HomeAddresses {
     @Column(name="address")
     private String address;
 
+
+
     @ManyToOne(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
-    private District district;
-
-
+    private Territory territory;
 
     @Override
     public String toString() {
-        return "HomeAddressesEntity{" +
-                "id=" + adr_id +
+        return "HomeAddresses{" +
+                "adr_id=" + adr_id +
                 ", address='" + address + '\'' +
-                ", district='" + district+ '\'' +
+                ", territory=" + territory +
                 '}';
     }
 }

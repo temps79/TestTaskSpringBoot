@@ -43,7 +43,7 @@ class Login extends Component<IProps, IState> {
                 const jwtToken = res.headers['authorization'];
                 if (jwtToken != null) {
                     sessionStorage.setItem("jwt", jwtToken);
-
+                    this.context.applicationStore.initEmployees()
                     this.setState({isAuthenticated: true});
                 }
                 else {
@@ -56,9 +56,7 @@ class Login extends Component<IProps, IState> {
         if (sessionStorage.getItem("jwt")) {
             return (
                 <div>
-                    {this.context.applicationStore.initEmployees()}
-
-                    {window.location.search!=''? (<Redirect to='/'/>):''}
+                    {window.location.search!=''? <Redirect to='/' /> : ''}
                     <HeaderComponent />
                     <Switch>
                         <Route path='/employee/:id'  component={FormEmployee}></Route>

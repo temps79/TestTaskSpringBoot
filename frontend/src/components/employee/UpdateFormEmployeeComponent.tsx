@@ -47,7 +47,7 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
     findAttr(){
         let resArray=[...CaoOptions,...ZaoOptions,...UaoOptions]
         let district= resArray.filter(el=>{
-            if(el.value==this.state.employee.homeAddresses?.district?.district_name)
+            if(el.value==this.state.employee.homeAddresses?.territory?.name)
                 return el
         })
         return district[0] as RegionOptionInterface;
@@ -89,10 +89,10 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
         e.preventDefault();
         if(this.handleValidation()) {
             EmployeeService.updateEmployee(this.state.employee.emp_id,this.state.employee).then(res => {
+                this.context.applicationStore.initEmployees()
                 this.props.history.push(`/employee/id=${res.data['emp_id']}`,res.data);
             });
             this.props.handler()
-            this.context.applicationStore.initEmployees()
         }
     }
     handleValidation() {
@@ -192,11 +192,11 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
                                                         if(homeAddresses==undefined) {
                                                             homeAddresses={}
                                                         }
-                                                        homeAddresses.district={
-                                                            region:{
-                                                                region_name : event.region
+                                                        homeAddresses.territory={
+                                                            territory:{
+                                                                name : event.region
                                                             },
-                                                            district_name:event.value
+                                                            name:event.value
                                                         }
                                                         let emp=this.state.employee
                                                         emp.homeAddresses=homeAddresses

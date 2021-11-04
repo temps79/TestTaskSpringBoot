@@ -5,28 +5,27 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
-
 @Entity
-@Table(name="district")
+@Table(name="territory")
 @Data
 @NoArgsConstructor
-public class District {
+public class Territory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long district_id;
+    private Long id;
 
-    @Column(name="district_name")
-    private String district_name;
+    @Column(name="name")
+    private String name;
 
     @ManyToOne(fetch = FetchType.EAGER,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
-    private Region region;
+    private Territory territory;
 
     @Override
     public String toString() {
-        return "District{" +
-                "district_id=" + district_id +
-                ", district_name='" + district_name + '\'' +
-                ", region=" + region +
+        return "Territory{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", territory=" + territory +
                 '}';
     }
 }

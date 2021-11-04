@@ -47,9 +47,9 @@ public class ExportExcelService {
             row.createCell(1).setCellValue(employee.getFullName());
             row.createCell(2).setCellValue(employee.getAge());
             row.createCell(3).setCellValue(employee.getHomeAddresses().getAddress());
-            row.createCell(4).setCellValue(employee.getHomeAddresses().getDistrict().getDistrict_name());
-            row.createCell(5).setCellValue(employee.getHomeAddresses().getDistrict().getRegion().getRegion_name());
-//            row.createCell(5).setCellValue(employee.getHomeAddresses().getRegion());
+            row.createCell(4).setCellValue(employee.getHomeAddresses().getTerritory().getName());
+            row.createCell(5).setCellValue(employee.getHomeAddresses().getTerritory().getTerritory().getName());
+
             try {
                 row.createCell(6).setCellValue(new SimpleDateFormat("k:m").format(employee.getOperationMode().getStartDay())
                                                     + "-" + new SimpleDateFormat("k:m").format(employee.getOperationMode().getEndDay()));

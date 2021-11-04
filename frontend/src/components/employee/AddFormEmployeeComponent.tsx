@@ -61,7 +61,6 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
             EmployeeService.addEmployee(employee).then(res => {
                 this.context.applicationStore.initEmployees()
                 console.log('addEmployee:'+JSON.stringify(res.data['emp_id']))
-                console.log()
                 let emp:Employee=res.data
                 this.props.history.push(`/employee/id=${res.data['emp_id']}`,emp);
             });
@@ -198,11 +197,11 @@ class AddFormEmployeeComponent extends Component<IProps, IState> {
                                                         if(homeAddresses==undefined) {
                                                             homeAddresses={}
                                                         }
-                                                        homeAddresses.district={
-                                                            region:{
-                                                                region_name : event.region
+                                                        homeAddresses.territory={
+                                                            territory:{
+                                                                name : event.region
                                                             },
-                                                            district_name:event.value
+                                                            name:event.value
                                                         }
                                                         this.setState({homeAddresses})
                                                     }

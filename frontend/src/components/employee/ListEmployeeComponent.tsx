@@ -44,8 +44,8 @@ class ListEmployeeComponent extends Component<IProps, IState> {
 
     sortList=[
         { label: 'имени', value: '/fullName' },
-        { label: 'округу', value: '/homeAddresses.district.region.region_name' },
-        { label: 'району', value: '/homeAddresses.district.district_name' },
+        { label: 'округу', value: '/homeAddresses.territory.territory.name' },
+        { label: 'району', value: '/homeAddresses.territory.name' },
         { label: 'возрасту', value: '/age' },
     ]
 
@@ -216,10 +216,10 @@ class ListEmployeeComponent extends Component<IProps, IState> {
                                             {employee.homeAddresses?.address}
                                         </td>
                                         <td>
-                                            { employee.homeAddresses?.district?.district_name}
+                                            { employee.homeAddresses?.territory?.name}
                                         </td>
                                         <td>
-                                            { employee.homeAddresses?.district?.region?.region_name}
+                                            { employee.homeAddresses?.territory?.territory?.name}
                                         </td>
                                         <td>
                                             {this.getHourseAndMinute(employee)}

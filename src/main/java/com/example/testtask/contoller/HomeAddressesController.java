@@ -24,10 +24,10 @@ public class HomeAddressesController {
 
     @GetMapping("/homeAddresses/regions")
     public List<String> getAllRegion(){
-        return  homeAddressesService.getAllRegion();
+        return  homeAddressesService.getAllUsageRegions();
     }
     @GetMapping("/homeAddresses/districts")
     public List<String> getAllDistrict(){
-        return  homeAddressesService.getAllDistrics();
+        return  homeAddressesService.getAllUsageDistricts();
     }
 }

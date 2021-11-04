@@ -38,17 +38,15 @@ class FormEmployeeComponent extends Component<IProps, IState> {
     }
     remove(){
         let id =this.props.location.pathname.substr(this.props.location.pathname.lastIndexOf('id=')+3)
-        EmployeeService.removeEmployee(id)
-        this.context.applicationStore.initEmployees()
+        EmployeeService.removeEmployee(id).then(res=>{
+            this.context.applicationStore.initEmployees()
+        })
         this.props.history.push('/')
 
     }
     componentDidMount() {
         let id =this.props.location.pathname.substr(this.props.location.pathname.lastIndexOf('id=')+3)
-        // let employee=this.context.applicationStore.employees.filter((emp: Employee)=>{
-        //    return emp.emp_id==Number(id)
-        // })
-        console.log(this.props.history.location.state)
+
         if(this.props.history.location.state==undefined){
             this.setState({employee: this.context.applicationStore.getEmployeeById(id)});
         }else {
@@ -96,9 +94,11 @@ class FormEmployeeComponent extends Component<IProps, IState> {
                             this.state.employee?.homeAddresses!=null ?(
                                 <Table responsive  >
                                     {
-                                        <tr>{this.state.employee!.homeAddresses!.district!.region?.region_name+','
-                                        +this.state.employee?.homeAddresses?.district?.district_name+','
-                                        +this.state.employee?.homeAddresses?.address+';'}</tr>
+                                        <tr>{
+                                            (this.state.employee?.homeAddresses?.territory?.territory?.name ?? ('Регион не выбран'))+','
+                                            +(this.state.employee?.homeAddresses?.territory?.name ?? (' район не выбран'))+','
+                                            +(this.state.employee?.homeAddresses?.address??'адрес не указан')+';'
+                                        }</tr>
                                     }
                                 </Table>
                             ):' адресов нет'

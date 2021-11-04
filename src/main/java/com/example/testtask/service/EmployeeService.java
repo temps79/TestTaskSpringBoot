@@ -1,9 +1,7 @@
 package com.example.testtask.service;
 
-import com.example.testtask.entity.District;
-import com.example.testtask.entity.Region;
+import com.example.testtask.entity.*;
 import com.example.testtask.repository.EmployeeRepository;
-import com.example.testtask.entity.Employee;
 import com.example.testtask.repository.HomeAdressesRepository;
 import com.example.testtask.service.impl.IEmployeeService;
 import org.hibernate.tool.schema.internal.exec.ScriptTargetOutputToFile;
@@ -37,6 +35,27 @@ public class EmployeeService implements IEmployeeService {
     }
     @Override
     public Employee addEmployee(Employee employee) {
+        List<String> regions=homeAdressesRepository.getAllRegions();
+        try {
+            if (regions.contains(employee.getHomeAddresses().getTerritory().getTerritory().getName())) {
+                List<String> districs = homeAdressesRepository.getAllDistrics();
+                Territory district;
+                if (districs.contains(employee.getHomeAddresses().getTerritory().getName())) {
+                    district = homeAdressesRepository.getDistrict(employee.getHomeAddresses().getTerritory().getName());
+                } else {
+                    Territory region = homeAdressesRepository.getRegion(employee.getHomeAddresses().getTerritory().getTerritory().getName());
+                    district = employee.getHomeAddresses().getTerritory();
+                    district.setTerritory(region);
+                }
+                HomeAddresses homeAddresses = employee.getHomeAddresses();
+                homeAddresses.setTerritory(district);
+                employee.setHomeAddresses(homeAddresses);
+            }
+        }
+        catch (NullPointerException e){
+
+        }
+
         return employeeRepository.save(employee);
     }
 
@@ -47,10 +66,17 @@ public class EmployeeService implements IEmployeeService {
         employeeById.setFullName(employee.getFullName());
         employeeById.setAge(employee.getAge());
         employeeById.setOperationMode(employee.getOperationMode());
-        employeeById.getHomeAddresses().getDistrict().setDistrict_name(employee.getHomeAddresses().getDistrict().getDistrict_name());
         employeeById.getHomeAddresses().setAddress(employee.getHomeAddresses().getAddress());
-        Region region=homeAdressesRepository.getRegion(employee.getHomeAddresses().getDistrict().getRegion().getRegion_name());
-        employeeById.getHomeAddresses().getDistrict().setRegion(region==null?employee.getHomeAddresses().getDistrict().getRegion() : region);
+
+        Territory district=homeAdressesRepository.getDistrict(employee.getHomeAddresses().getTerritory().getName()) ;
+        Territory region=homeAdressesRepository.getRegion(employee.getHomeAddresses().getTerritory().getTerritory().getName());
+
+        if(district==null){
+            district=employee.getHomeAddresses().getTerritory();
+        }
+        district.setTerritory(region==null?employee.getHomeAddresses().getTerritory().getTerritory() : region);
+        employeeById.getHomeAddresses().setTerritory(district==null? employee.getHomeAddresses().getTerritory() : district);
+
 
         return employeeRepository.save(employeeById);
     }

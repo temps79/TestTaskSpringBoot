@@ -1,9 +1,6 @@
 package com.example.testtask.repository;
 
-import com.example.testtask.entity.District;
-import com.example.testtask.entity.Employee;
-import com.example.testtask.entity.HomeAddresses;
-import com.example.testtask.entity.Region;
+import com.example.testtask.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
@@ -19,13 +16,25 @@ import java.util.List;
 @Transactional
 @Repository
 public interface HomeAdressesRepository extends PagingAndSortingRepository<HomeAddresses, Long> {
-    @Query("select distinct d.district_name from District d")
+    @Query("select distinct t.name from Territory t where t.territory is not null")
     List<String> getAllDistrics();
-    @Query("select distinct r.region_name from Region r")
+
+    @Query("select distinct e.homeAddresses.territory.name from Employee e ")
+    List<String> getAllUsageDistricts();
+
+    @Query("select distinct e.homeAddresses.territory.territory.name from Employee e ")
+    List<String> getAllUsageRegions();
+
+    @Query("select distinct t.name from Territory t where t.territory is null")
     List<String> getAllRegions();
-    @Query("from Region r where  r.region_name IN(:region) ")
-    Region getRegion(@Param("region") String region);
-    @Query("from District d where d.district_name IN(:district)  ")
-    District getDistrict( @Param("district") String district);
+
+    @Query(" from Territory t where  t.name =:region and t.territory is null")
+    Territory getRegion(@Param("region") String region);
+
+    @Query(" from Territory t where  t.name =:region and t.territory is null")
+    List<Territory> getRegions(@Param("region") String region);
+
+    @Query("from Territory t where  t.name IN(:district) and t.territory is not  null")
+    Territory getDistrict( @Param("district") String district);
 
 }
