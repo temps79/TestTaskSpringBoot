@@ -22,7 +22,7 @@ public class Employee {
     private int age;
 
     @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "ope_id" )
+    @JoinColumn(name = "opr_id" )
     private OperationMode operationMode;
 
     @OneToOne(cascade = CascadeType.ALL)

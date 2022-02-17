@@ -65,11 +65,6 @@ public class EmployeeService implements IEmployeeService {
     public Employee updateEmployee(long id,Employee employee) {
         Employee employeeById=getEmployeeById(id);
 
-        employeeById.setFullName(employee.getFullName());
-        employeeById.setAge(employee.getAge());
-//        employeeById.setOperationMode(employee.getOperationMode());
-        employeeById.getHomeAddresses().setAddress(employee.getHomeAddresses().getAddress());
-
         Territory district=homeAdressesRepository.getDistrict(employee.getHomeAddresses().getTerritory().getName()) ;
         Territory region=homeAdressesRepository.getRegion(employee.getHomeAddresses().getTerritory().getTerritory().getName());
 
@@ -77,6 +72,13 @@ public class EmployeeService implements IEmployeeService {
             district=employee.getHomeAddresses().getTerritory();
         }
         district.setTerritory(region==null?employee.getHomeAddresses().getTerritory().getTerritory() : region);
+
+        employeeById.setFullName(employee.getFullName());
+        employeeById.setAge(employee.getAge());
+        OperationMode mode=employee.getOperationMode();
+        employeeById.setOperationMode(mode);
+        employeeById.getHomeAddresses().setAddress(employee.getHomeAddresses().getAddress());
+
         employeeById.getHomeAddresses().setTerritory(district==null? employee.getHomeAddresses().getTerritory() : district);
 
 
