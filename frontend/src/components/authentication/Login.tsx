@@ -43,7 +43,6 @@ class Login extends Component<IProps, IState> {
                 const jwtToken = res.headers['authorization'];
                 if (jwtToken != null) {
                     sessionStorage.setItem("jwt", jwtToken);
-                    this.context.applicationStore.initEmployees()
                     this.setState({isAuthenticated: true});
                 }
                 else {

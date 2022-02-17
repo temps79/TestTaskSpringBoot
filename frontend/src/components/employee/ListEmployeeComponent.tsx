@@ -5,7 +5,8 @@ import {Button, Col, Row} from "react-bootstrap";
 import Select from "react-select";
 import {Input} from "reactstrap";
 import {Employee} from "../../interface/EmployeeInterface";
-import { observer} from "mobx-react";
+import {inject, observer} from "mobx-react";
+import applicationStore from "../../stores/ApplicationStore";
 
 import {AppContext} from "../../AppContext";
 
@@ -24,6 +25,8 @@ interface IState {
 }
 
 
+
+@inject('applicationStore')
 @observer
 class ListEmployeeComponent extends Component<IProps, IState> {
     static contextType = AppContext;
@@ -75,6 +78,7 @@ class ListEmployeeComponent extends Component<IProps, IState> {
         return new_array;
     }
     componentDidMount() {
+        this.context.applicationStore.initEmployees()
         HomeAddressesService.getAllDistricts().then((res)=>{
             this.setState({districts:this.convertToOptions(res.data)})
         })
@@ -109,6 +113,7 @@ class ListEmployeeComponent extends Component<IProps, IState> {
         }else return 'График не установлен'
     }
     filtredEmployees() {
+        console.log(applicationStore.employees)
         let filterArray=this.context.applicationStore.employees.filter((employee: { fullName: string; }) => {
             return employee.fullName.toLowerCase().includes(this.state.value.toLowerCase());
         })
