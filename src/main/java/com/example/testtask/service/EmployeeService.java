@@ -23,6 +23,8 @@ public class EmployeeService implements IEmployeeService {
     private EmployeeRepository employeeRepository;
     @Autowired
     private HomeAdressesRepository homeAdressesRepository;
+    @Autowired
+    private HomeAddressesService homeAddressesService;
 
     @Override
     public List<Employee> getAllEmployees() {
@@ -53,7 +55,7 @@ public class EmployeeService implements IEmployeeService {
             }
         }
         catch (NullPointerException e){
-
+            e.printStackTrace();
         }
 
         return employeeRepository.save(employee);
@@ -65,7 +67,7 @@ public class EmployeeService implements IEmployeeService {
 
         employeeById.setFullName(employee.getFullName());
         employeeById.setAge(employee.getAge());
-        employeeById.setOperationMode(employee.getOperationMode());
+//        employeeById.setOperationMode(employee.getOperationMode());
         employeeById.getHomeAddresses().setAddress(employee.getHomeAddresses().getAddress());
 
         Territory district=homeAdressesRepository.getDistrict(employee.getHomeAddresses().getTerritory().getName()) ;
@@ -76,6 +78,7 @@ public class EmployeeService implements IEmployeeService {
         }
         district.setTerritory(region==null?employee.getHomeAddresses().getTerritory().getTerritory() : region);
         employeeById.getHomeAddresses().setTerritory(district==null? employee.getHomeAddresses().getTerritory() : district);
+
 
 
         return employeeRepository.save(employeeById);

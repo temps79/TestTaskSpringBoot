@@ -13,19 +13,32 @@ export class ApplicationStore {
     LIMIT=30;
     @observable
     fetching:boolean=true
+    @observable
+    isInitialized=false
 
     constructor() {
         makeAutoObservable(this);
     }
+
+    @action.bound
+    setInitialized(isInitialized:boolean){
+        this.isInitialized=isInitialized
+    }
+
     @action
-    initEmployees(){
+    async initEmployees(){
         EmployeeService.getFilterSortEmployees(0,this.LIMIT,'',[],[])
             .then(response=>{
-                    this.employees=response.data;
+                    this.setEmployees(response.data)
+                    this.setInitialized(true)
                     this.totalCount =response.headers['x-total-count'];
                     this.currentPage=1;
                 }
             )
+    }
+    @action.bound
+    setEmployees(employees:any[]){
+        this.employees=employees;
     }
     @action
     updateEmployees(sortBy:string='', districts:any[]=[], regions:any[]=[]){
@@ -54,7 +67,7 @@ export class ApplicationStore {
             })
 
     }
-    @action.bound
+    @action
     getEmployeeById(id:number){
         return this.employees.find(emp=>emp.emp_id==id)
     }

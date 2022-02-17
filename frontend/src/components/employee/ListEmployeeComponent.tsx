@@ -113,7 +113,6 @@ class ListEmployeeComponent extends Component<IProps, IState> {
         }else return 'График не установлен'
     }
     filtredEmployees() {
-        console.log(applicationStore.employees)
         let filterArray=this.context.applicationStore.employees.filter((employee: { fullName: string; }) => {
             return employee.fullName.toLowerCase().includes(this.state.value.toLowerCase());
         })

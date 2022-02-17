@@ -5,4 +5,5 @@ import java.util.List;
 public interface IHomeAddressesService {
     List<String> getAllUsageDistricts();
     List<String> getAllUsageRegions();
+    List<String> getAllRegions();
 }

@@ -6,8 +6,9 @@ import {RouteComponentProps} from "react-router-dom";
 import {Employee} from "../../interface/EmployeeInterface";
 import {withRouter} from "react-router";
 import UpdateFormEmployeeComponent from "./UpdateFormEmployeeComponent";
-import {observer} from "mobx-react";
+import {inject, observer} from "mobx-react";
 import {AppContext} from "../../AppContext";
+import applicationStore from "../../stores/ApplicationStore";
 
 
 
@@ -20,6 +21,7 @@ interface IState {
 }
 
 @observer
+@inject('applicationStore')
 class FormEmployeeComponent extends Component<IProps, IState> {
     static contextType = AppContext;
     constructor(props:IProps) {

@@ -22,5 +22,10 @@ public class HomeAddressesService implements IHomeAddressesService {
         return homeAdressesRepository.getAllUsageRegions();
     }
 
+    @Override
+    public List<String> getAllRegions() {
+        return homeAdressesRepository.getAllRegions();
+    }
+
 
 }

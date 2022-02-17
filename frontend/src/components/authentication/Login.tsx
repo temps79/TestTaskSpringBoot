@@ -9,6 +9,9 @@ import HeaderComponent from "../HeaderComponent";
 import FooterComponent from "../FooterComponent";
 import axios from "axios";
 import {AppContext} from "../../AppContext";
+import {inject, observer} from "mobx-react";
+import applicationStore from "../../stores/ApplicationStore";
+
 
 interface IProps {
 }
@@ -22,7 +25,8 @@ interface IState {
 }
 
 
-
+@inject('applicationStore')
+@observer
 class Login extends Component<IProps, IState> {
     static contextType = AppContext;
     constructor(props:IProps) {
@@ -34,6 +38,12 @@ class Login extends Component<IProps, IState> {
             open: false
         };
     }
+    componentDidMount() {
+        if (sessionStorage.getItem("jwt")) {
+           applicationStore.initEmployees()
+                .then(()=>console.log(applicationStore.employees));
+        }
+    }
 
     login = (e: React.KeyboardEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -43,6 +53,7 @@ class Login extends Component<IProps, IState> {
                 const jwtToken = res.headers['authorization'];
                 if (jwtToken != null) {
                     sessionStorage.setItem("jwt", jwtToken);
+
                     this.setState({isAuthenticated: true});
                 }
                 else {
@@ -57,11 +68,13 @@ class Login extends Component<IProps, IState> {
                 <div>
                     {window.location.search!=''? <Redirect to='/' /> : ''}
                     <HeaderComponent />
-                    <Switch>
-                        <Route path='/employee/:id'  component={FormEmployee}></Route>
-                        <Route path='/add/employee'  component={AddFormEmployeeComponent}></Route>
-                        <Route  path='/'  component={ListEmployeeComponent}></Route>
-                    </Switch>
+                    {applicationStore.isInitialized &&
+                        <Switch>
+                            <Route path='/employee/:id' component={FormEmployee}></Route>
+                            <Route path='/add/employee' component={AddFormEmployeeComponent}></Route>
+                            <Route path='/' component={ListEmployeeComponent}></Route>
+                        </Switch>
+                    }
                     <FooterComponent/>
                 </div>
             )
