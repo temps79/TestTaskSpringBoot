@@ -1,7 +1,7 @@
 import React, {Component} from 'react';
 import ListEmployeeComponent from "../employee/ListEmployeeComponent";
 import 'bootstrap/dist/css/bootstrap.css'
-import {Redirect, Route, Switch} from "react-router-dom";
+import {BrowserRouter, Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
 import FormEmployee from "../employee/FormEmployeeComponent";
 import AddFormEmployeeComponent from "../employee/AddFormEmployeeComponent";
 import {Button, Form} from "react-bootstrap";
@@ -11,9 +11,11 @@ import axios from "axios";
 import {AppContext} from "../../AppContext";
 import {inject, observer} from "mobx-react";
 import applicationStore from "../../stores/ApplicationStore";
+import {withRouter} from "react-router";
+import app from "../../App";
 
 
-interface IProps {
+interface IProps extends RouteComponentProps {
 }
 
 
@@ -40,8 +42,7 @@ class Login extends Component<IProps, IState> {
     }
     componentDidMount() {
         if (sessionStorage.getItem("jwt")) {
-           applicationStore.initEmployees()
-                .then(()=>console.log(applicationStore.employees));
+           applicationStore.initEmployees();
         }
     }
 
@@ -53,11 +54,15 @@ class Login extends Component<IProps, IState> {
                 const jwtToken = res.headers['authorization'];
                 if (jwtToken != null) {
                     sessionStorage.setItem("jwt", jwtToken);
-
                     this.setState({isAuthenticated: true});
+                    applicationStore.initEmployees()
+                        .then(()=>this.props.history.push('/'))
+                    console.log(applicationStore.employees)
                 }
                 else {
-                    this.setState({open: true});
+                    this.setState({
+                        open: true
+                    });
                 }
             })
             .catch(err => console.error(err))
@@ -66,14 +71,14 @@ class Login extends Component<IProps, IState> {
         if (sessionStorage.getItem("jwt")) {
             return (
                 <div>
-                    {window.location.search!=''? <Redirect to='/' /> : ''}
+                    {/*{window.location.search!=''? <Redirect to='/' /> : ''}*/}
                     <HeaderComponent />
                     {applicationStore.isInitialized &&
-                        <Switch>
-                            <Route path='/employee/:id' component={FormEmployee}></Route>
-                            <Route path='/add/employee' component={AddFormEmployeeComponent}></Route>
-                            <Route path='/' component={ListEmployeeComponent}></Route>
-                        </Switch>
+                        <BrowserRouter>
+                            <Route exact path='/employee/:id' component={FormEmployee}></Route>
+                            <Route exact path='/add/employee' component={AddFormEmployeeComponent}></Route>
+                            <Route exact path='/' component={ListEmployeeComponent}></Route>
+                        </BrowserRouter>
                     }
                     <FooterComponent/>
                 </div>
@@ -87,7 +92,7 @@ class Login extends Component<IProps, IState> {
                                 this.login(event)
                             }
                         }}>
-                        <Form.Group /*size="lg"*/ controlId="login" >
+                        <Form.Group  controlId="login" >
                             <Form.Label>Логин</Form.Label>
                             <Form.Control
                                 autoFocus
@@ -100,7 +105,7 @@ class Login extends Component<IProps, IState> {
                                 }
                             />
                         </Form.Group>
-                        <Form.Group /*size="lg"*/ controlId="password">
+                        <Form.Group controlId="password">
                             <Form.Label>Пароль</Form.Label>
                             <Form.Control
                                 name='password'
@@ -125,4 +130,4 @@ class Login extends Component<IProps, IState> {
     }
 }
 
-export default Login;
+export default withRouter(Login);

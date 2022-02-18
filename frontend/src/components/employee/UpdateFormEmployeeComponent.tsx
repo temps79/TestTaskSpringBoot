@@ -28,8 +28,6 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
     static contextType = AppContext;
     constructor(props:IProps) {
         super(props);
-
-
         this.state={
             employee:props.employee,
             errors: {},
@@ -179,14 +177,13 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
                                         placeholder='Адрес'
                                     />
                                 </Col>
-                                <Col >{
-                                    <Select<RegionOptionInterface , false, GroupedOptionInterface>
+                                <Col>
+                                    {<Select <RegionOptionInterface , false, GroupedOptionInterface>
                                         placeholder={'Выберите район...'}
                                         options={groupedOptions}
                                         value={this.findAttr()}
                                         onChange=
-                                            {
-                                                (event)=>{
+                                            {(event)=>{
                                                     if(event!=null){
                                                         let homeAddresses:HomeAddress | undefined = this.state.employee.homeAddresses;
                                                         if(homeAddresses==undefined) {
@@ -203,9 +200,7 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
                                                         this.setState({employee:emp})
                                                     }
                                                 }
-                                            }
-                                    />
-                                }
+                                            }/>}
                                 </Col>
 
                             </Row>
