@@ -178,7 +178,7 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
                                     />
                                 </Col>
                                 <Col>
-                                    {<Select <RegionOptionInterface , false, GroupedOptionInterface>
+                                    <Select <RegionOptionInterface , false, GroupedOptionInterface>
                                         placeholder={'Выберите район...'}
                                         options={groupedOptions}
                                         value={this.findAttr()}
@@ -200,7 +200,7 @@ class UpdateFormEmployeeComponent extends Component<IProps, IState> {
                                                         this.setState({employee:emp})
                                                     }
                                                 }
-                                            }/>}
+                                            }/>
                                 </Col>
 
                             </Row>

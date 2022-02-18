@@ -193,7 +193,12 @@ class ListEmployeeComponent extends Component<IProps, IState> {
                                 />
                             </Col>
                             <Col>
-                                <Button variant="outline-dark"   onClick={this.addEmployee.bind(this)}>Добавить сотрудника</Button>
+                                {sessionStorage.role == applicationStore.ADMIN &&
+                                    <Button variant="outline-dark"
+                                            onClick={this.addEmployee.bind(this)}>
+                                        Добавить сотрудника
+                                    </Button>
+                                }
                             </Col>
                         </Row>
                         <br/>

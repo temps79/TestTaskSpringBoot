@@ -9,6 +9,7 @@ import UpdateFormEmployeeComponent from "./UpdateFormEmployeeComponent";
 import {inject, observer} from "mobx-react";
 import {AppContext} from "../../AppContext";
 import applicationStore from "../../stores/ApplicationStore";
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 
 
@@ -115,8 +116,23 @@ class FormEmployeeComponent extends Component<IProps, IState> {
                     </ListGroup>
                     <br/>
                     <Button variant="outline-dark" onClick={this.cancel.bind(this)}>Вернуться к списку сотрудников</Button>{' '}
-                    <Button variant="outline-dark" onClick={()=>{this.setState({editOnly:true})}}>Редактировать</Button>{' '}
-                    <Button variant="outline-danger" onClick={this.remove.bind(this)}>Удалить</Button>{' '}
+                    {sessionStorage.role==applicationStore.ADMIN &&
+                        <>
+                            <Button className={'mr-5'}
+                                    variant="outline-dark"
+                                    onClick={() => {
+                                        this.setState({editOnly: true})
+                                    }}>
+                                    Редактировать
+                            </Button>
+                            <Button className={'mr-5'}
+                                    variant="outline-danger"
+                                    onClick={this.remove.bind(this)}>
+                                Удалить
+                            </Button>{' '}
+                        </>
+                    }
+
                 </div>
             );
         }

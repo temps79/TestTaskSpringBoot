@@ -3,6 +3,9 @@ import {Employee} from "../interface/EmployeeInterface";
 import EmployeeService from "../services/EmployeeService";
 
 export class ApplicationStore {
+    ADMIN="ADMIN"
+    USER="USER"
+
     @observable
     employees:Employee[]=[];
     @observable
@@ -15,11 +18,17 @@ export class ApplicationStore {
     fetching:boolean=true
     @observable
     isInitialized=false
+    @observable
+    role:string=''
 
     constructor() {
         makeAutoObservable(this);
     }
 
+    @action.bound
+    setRole(role:string){
+        this.role=role
+    }
     @action.bound
     setInitialized(isInitialized:boolean){
         this.isInitialized=isInitialized

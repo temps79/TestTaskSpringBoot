@@ -15,3 +15,6 @@ spring:
 user:
   userName: admin
   password: admin
+
+role:
+  roles: ADMIN,USER

@@ -6,6 +6,7 @@ import {Redirect, Route, RouteComponentProps, Switch} from "react-router-dom";
 import RegistationComponent from "./authentication/RegistationComponent";
 import {History, LocationState} from "history";
 import { withRouter } from "react-router";
+import applicationStore from "../stores/ApplicationStore";
 
 interface IProps extends RouteComponentProps{
 }
@@ -29,9 +30,11 @@ class HeaderComponent extends Component<IProps,{}> {
                                 <Nav.Link  href='/download'>
                                     Выгрузка списка в Excel
                                 </Nav.Link>
-                                <Nav.Link  href='/registration' >
-                                    Регистрация
-                                </Nav.Link>
+                                {sessionStorage.role == applicationStore.ADMIN &&
+                                    <Nav.Link href='/registration'>
+                                        Регистрация
+                                    </Nav.Link>
+                                }
                             </Nav>
                                 <Nav.Item>
                                     <Button variant="outline-light" href={"/"} onClick={()=>{

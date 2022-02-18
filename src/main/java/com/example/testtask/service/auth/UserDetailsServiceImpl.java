@@ -1,5 +1,6 @@
 package com.example.testtask.service.auth;
 
+import com.example.testtask.entity.auth.Role;
 import com.example.testtask.entity.auth.User;
 import com.example.testtask.repository.auth.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,14 +13,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Optional;
 
 @Service
 public class UserDetailsServiceImpl implements UserDetailsService {
     @Autowired
     private PasswordEncoder passwordEncoder;
-
+    @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private RoleService roleService;
 
     @Autowired
     public UserDetailsServiceImpl(UserRepository userRepository) {
@@ -40,6 +44,13 @@ public class UserDetailsServiceImpl implements UserDetailsService {
             return null;
         }
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        if(user.getRole().getId()==null){
+            Role role=roleService.findRoleByName(user.getRole().getName());
+            user.setRoles(List.of(role));
+        }
         return userRepository.save(user);
+    }
+    public List<User> findAll(){
+        return (List<User>)userRepository.findAll();
     }
 }

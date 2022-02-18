@@ -54,10 +54,10 @@ class Login extends Component<IProps, IState> {
                 const jwtToken = res.headers['authorization'];
                 if (jwtToken != null) {
                     sessionStorage.setItem("jwt", jwtToken);
+                    sessionStorage.setItem("role",res.data.Role)
                     this.setState({isAuthenticated: true});
                     applicationStore.initEmployees()
                         .then(()=>this.props.history.push('/'))
-                    console.log(applicationStore.employees)
                 }
                 else {
                     this.setState({
@@ -77,7 +77,7 @@ class Login extends Component<IProps, IState> {
                         <BrowserRouter>
                             <Route exact path='/employee/:id' component={FormEmployee}></Route>
                             <Route exact path='/add/employee' component={AddFormEmployeeComponent}></Route>
-                            <Route exact path='/' component={ListEmployeeComponent}></Route>
+                            <Route exact path={['/','/registration']} component={ListEmployeeComponent}></Route>
                         </BrowserRouter>
                     }
                     <FooterComponent/>
@@ -113,9 +113,7 @@ class Login extends Component<IProps, IState> {
                                 value={this.state.password}
                                 onChange={(event:React.ChangeEvent<HTMLInputElement>)=>{
                                     this.setState({password:event.target.value})
-                                }
-                                }
-                            />
+                                }}/>
                         </Form.Group>
                         <div className="d-grid gap-2">
                             <Button  variant="outline-primary" block size="lg"  type="submit" >

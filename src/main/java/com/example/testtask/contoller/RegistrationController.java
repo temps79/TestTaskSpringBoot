@@ -1,5 +1,6 @@
 package com.example.testtask.contoller;
 
+import com.example.testtask.entity.auth.Role;
 import com.example.testtask.entity.auth.User;
 import com.example.testtask.service.auth.UserDetailsServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
