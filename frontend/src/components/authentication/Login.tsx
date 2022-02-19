@@ -71,7 +71,6 @@ class Login extends Component<IProps, IState> {
         if (sessionStorage.getItem("jwt")) {
             return (
                 <div>
-                    {/*{window.location.search!=''? <Redirect to='/' /> : ''}*/}
                     <HeaderComponent />
                     {applicationStore.isInitialized &&
                         <BrowserRouter>

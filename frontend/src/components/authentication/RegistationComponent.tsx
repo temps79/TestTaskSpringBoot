@@ -2,7 +2,6 @@ import React, {Component} from 'react';
 import {Button, Form, Modal} from "react-bootstrap";
 import RegistrationService from "../../services/RegistrationService";
 import {RouteComponentProps} from "react-router-dom";
-import {Employee} from "../../interface/EmployeeInterface";
 import {withRouter} from "react-router";
 import {Errors} from "../../interface/ErrorsInterface";
 import applicationStore from "../../stores/ApplicationStore";
