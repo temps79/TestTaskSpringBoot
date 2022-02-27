@@ -3,7 +3,7 @@
 
 +	JDK 8 или 11
 +	Maven
-+	Glassfish 4.1.2 или SpringBoot
++	SpringBoot
 +	PostgreSQL (Можно использовать Docker для упрощения установки БД)
 +	Для фронта можно использовать jQuery, Bootstrap, Font awesome или React
 +	Для разработки мы используем IntelliJ IDE. Но можно использовать любую IDE (хоть vscode)
