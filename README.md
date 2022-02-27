@@ -1,12 +1,11 @@
 # TestTaskSpringBoot
 ## Стек технологий
 
-+	JDK 8 или 11
++	JDK 8
 +	Maven
 +	SpringBoot
-+	PostgreSQL (Можно использовать Docker для упрощения установки БД)
-+	Для фронта можно использовать jQuery, Bootstrap, Font awesome или React
-+	Для разработки мы используем IntelliJ IDE. Но можно использовать любую IDE (хоть vscode)
++	PostgreSQL 
++	Для фронта использую Bootstrap, Font awesome и React
 ## Задание.
 
 Необходимо разработать веб-приложение для Glassfish 4, отвечающие требованиям ниже.
